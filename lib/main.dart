@@ -5,9 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  final status = await Geolocator.checkPermission();
+  if (status == LocationPermission.denied) {
+    await Geolocator.requestPermission();
+  }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

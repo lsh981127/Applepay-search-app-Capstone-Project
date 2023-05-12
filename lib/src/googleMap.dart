@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:math';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +19,8 @@ class googleMapPage extends StatefulWidget {
 class _googleMapPageState extends State<googleMapPage> {
   late GoogleMapController mapController;
 
+  bool _myLocationEnabled = false;
+
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
   List<Map<String,dynamic>> _csvData=[];
@@ -26,6 +30,25 @@ class _googleMapPageState extends State<googleMapPage> {
     super.initState();
     _readCsv().then((_){
       _loadMarkers();
+    });
+  }
+
+  Future<void> _getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition();
+    //double currentLatitude = position.latitude;
+    //double currentLongitude = position.longitude;
+    final LatLng currentLocation = LatLng(position.latitude, position.longitude);
+    print(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
+
+
+    final cameraPosition = CameraPosition(
+      bearing:0,
+      target: currentLocation ,
+      zoom: 18,
+    );
+    mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    setState(() {
+      _myLocationEnabled = true;
     });
   }
 
@@ -47,13 +70,16 @@ class _googleMapPageState extends State<googleMapPage> {
     }).toList();
   }
 
+
   void _loadMarkers() {
-    List<Marker> markers = [];
+
+      List<Marker> markers = [];
     for (var i=0;i<_csvData.length;i++) {
       final name=_csvData[i]['name'];
       final latitude=_csvData[i]['latitude'];
       final longitude=_csvData[i]['longitude'];
       final address=_csvData[i]['address'];
+      //double distanceInMeters = Geolocator.distanceBetween(currentLatitude,currentLongitude,latitude,longitude);
       markers.add(
         Marker(
           markerId: MarkerId(name),
@@ -79,7 +105,9 @@ class _googleMapPageState extends State<googleMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: GoogleMap(
+      body: Stack(
+        children: [
+      GoogleMap(
         mapType: MapType.normal,
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
@@ -87,11 +115,27 @@ class _googleMapPageState extends State<googleMapPage> {
           zoom: 16.0,
         ),
         markers: _markers.toSet(),
+        myLocationEnabled: _myLocationEnabled,
+        myLocationButtonEnabled: true,
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){},
-        label: Text('버튼 테스트'),
-      ),
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: FloatingActionButton(
+            onPressed: _getCurrentLocation,
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.white,
+            elevation: 8, // 그림자 크기
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
+            ),
+            child: Icon(Icons.my_location),
+          ),
+        ),
+
+        ]
+    )
+
     );
   }
 }
