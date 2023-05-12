@@ -17,8 +17,9 @@ class googleMapPage extends StatefulWidget {
 }
 
 class _googleMapPageState extends State<googleMapPage> {
+  double currentLatitude=0;
+  double currentLongitude=0;
   late GoogleMapController mapController;
-
   bool _myLocationEnabled = false;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
@@ -28,28 +29,25 @@ class _googleMapPageState extends State<googleMapPage> {
   @override
   void initState() {
     super.initState();
-    _readCsv().then((_){
-      _loadMarkers();
-    });
+    _readCsv();
   }
 
   Future<void> _getCurrentLocation() async {
     final position = await Geolocator.getCurrentPosition();
-    //double currentLatitude = position.latitude;
-    //double currentLongitude = position.longitude;
+    currentLatitude = position.latitude;
+    currentLongitude = position.longitude;
     final LatLng currentLocation = LatLng(position.latitude, position.longitude);
     print(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
-
-
     final cameraPosition = CameraPosition(
       bearing:0,
       target: currentLocation ,
-      zoom: 18,
+      zoom: 17,
     );
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     setState(() {
       _myLocationEnabled = true;
     });
+    _loadMarkers();
   }
 
   Future<void> _readCsv() async{
@@ -70,31 +68,35 @@ class _googleMapPageState extends State<googleMapPage> {
     }).toList();
   }
 
-
   void _loadMarkers() {
-
-      List<Marker> markers = [];
-    for (var i=0;i<_csvData.length;i++) {
-      final name=_csvData[i]['name'];
-      final latitude=_csvData[i]['latitude'];
-      final longitude=_csvData[i]['longitude'];
-      final address=_csvData[i]['address'];
-      //double distanceInMeters = Geolocator.distanceBetween(currentLatitude,currentLongitude,latitude,longitude);
-      markers.add(
-        Marker(
-          markerId: MarkerId(name),
-          position: LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: name,
-            snippet: address,
+    double distanceInMeters;
+    List<Marker> markers = [];
+    print(_myLocationEnabled);
+    if(_myLocationEnabled == true){
+    for (var i = 0; i < _csvData.length; i++) {
+      final name = _csvData[i]['name'];
+      final latitude = _csvData[i]['latitude'];
+      final longitude = _csvData[i]['longitude'];
+      final address = _csvData[i]['address'];
+      if (true) {
+        distanceInMeters = Geolocator.distanceBetween(currentLatitude, currentLongitude, latitude, longitude);
+        print(distanceInMeters);
+      }
+      if (distanceInMeters <= 500) {
+        markers.add(
+          Marker(
+            markerId: MarkerId(name),
+            position: LatLng(latitude, longitude),
+            infoWindow: InfoWindow(
+              title: name,
+              snippet: address,
+            ),
           ),
-        ),
-      );
-    }
-
-    setState(() {
-      _markers.addAll(markers);
-    });
+        );
+      setState(() {
+        _markers.addAll(markers);
+      });}
+    }}
   }
 
   void _onMapCreated(GoogleMapController controller) {
