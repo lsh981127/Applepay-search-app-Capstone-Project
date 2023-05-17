@@ -53,9 +53,11 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
         minSdkVersion 20
         targetSdkVersion 28
         multiDexEnabled true // 멀티덱스를 사용하도록 설정.
+
     }
 
     buildTypes {
@@ -73,5 +75,10 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     implementation "androidx.multidex:multidex:2.0.1" // 멀티덱스 라이브러리를 종속 항목으로 추가.
+
+    implementation 'com.android.support:multidex:1.0.3'
+
 }
+
