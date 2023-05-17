@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
@@ -30,10 +29,11 @@ class _googleMapPageState extends State<googleMapPage> {
   void initState() {
     super.initState();
     _readCsv();
+    _getCurrentLocation();
   }
 
   Future<void> _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition();
+    final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
     final LatLng currentLocation = LatLng(position.latitude, position.longitude);
@@ -78,10 +78,8 @@ class _googleMapPageState extends State<googleMapPage> {
       final latitude = _csvData[i]['latitude'];
       final longitude = _csvData[i]['longitude'];
       final address = _csvData[i]['address'];
-      if (true) {
-        distanceInMeters = Geolocator.distanceBetween(currentLatitude, currentLongitude, latitude, longitude);
-        print(distanceInMeters);
-      }
+      distanceInMeters = Geolocator.distanceBetween(currentLatitude, currentLongitude, latitude, longitude);
+      print(distanceInMeters);
       if (distanceInMeters <= 500) {
         markers.add(
           Marker(
@@ -93,15 +91,29 @@ class _googleMapPageState extends State<googleMapPage> {
             ),
           ),
         );
-      setState(() {
-        _markers.addAll(markers);
-      });}
-    }}
+        setState(() {
+          _markers.addAll(markers);
+        });
+      }
+    }
+    }
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+  Map<String, bool> filters = {
+    "편의점": false,
+    "대형마트" : false,
+    "카페": false,
+    "백화점": false
+  };
+   List<Icon> icons=[
+     Icon(Icons.store),
+     Icon(Icons.local_grocery_store),
+     Icon(Icons.local_cafe),
+     Icon(Icons.local_mall)
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -118,13 +130,14 @@ class _googleMapPageState extends State<googleMapPage> {
         ),
         markers: _markers.toSet(),
         myLocationEnabled: _myLocationEnabled,
-        myLocationButtonEnabled: true,
+        compassEnabled: true,
+        myLocationButtonEnabled: false,
       ),
         Positioned(
           bottom: 16,
           left: 16,
           child: FloatingActionButton(
-            onPressed: _getCurrentLocation,
+            onPressed:_getCurrentLocation,
             foregroundColor: Colors.black,
             backgroundColor: Colors.white,
             elevation: 8, // 그림자 크기
@@ -134,6 +147,18 @@ class _googleMapPageState extends State<googleMapPage> {
             child: Icon(Icons.my_location),
           ),
         ),
+          ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: filters.entries.length, //총 갯수
+              itemBuilder: (context, index) { //index번째의 view, 0부터 시작
+                return GestureDetector(
+                  onTap: () => setState(() => filters[filters.keys.elementAt(index)] = !filters.values.elementAt(index)),
+                  child: Chip(
+                      avatar: icons[index],
+                      backgroundColor: filters.values.elementAt(index) ? Colors.white : Colors.grey,
+                      label: Text(filters.keys.elementAt(index))),
+                );
+              })
 
         ]
     )
