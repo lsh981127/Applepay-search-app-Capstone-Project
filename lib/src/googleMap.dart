@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:csv/csv.dart';
 import 'package:proj4dart/proj4dart.dart';
@@ -161,12 +160,12 @@ class _googleMapPageState extends State<googleMapPage> {
             height: 50,
 
             child:ListView.builder(
-                padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
+                //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
               scrollDirection: Axis.horizontal,
               itemCount: filters.entries.length, //총 갯수
               itemBuilder: (context, index) {
                   return Padding(//index번째의 view, 0부터 시작
-                      padding: new EdgeInsets.all(10.0),
+                      padding: new EdgeInsets.all(5.0),
                 child: GestureDetector(
                   onTap: () => setState(() => filters[filters.keys.elementAt(index)] = !filters.values.elementAt(index)),
                   child: Chip(
