@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:csv/csv.dart';
 import 'package:proj4dart/proj4dart.dart';
@@ -29,7 +30,14 @@ class _googleMapPageState extends State<googleMapPage> {
     });
   }
 
-  Future<void> _readCsv() async{
+  Future<Position> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    return position;
+  }
+
+  Future<void> _readCsv() async {
     var srcProj=Projection.add('EPSG:2097','+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
     var dstnProj=Projection.get('EPSG:4326')!;
     final csvData = await rootBundle.loadString('data_prototype_utf-8.csv');
@@ -89,7 +97,9 @@ class _googleMapPageState extends State<googleMapPage> {
         markers: _markers.toSet(),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){},
+        onPressed: (){
+          setState(() {});
+        },
         label: Text('버튼 테스트'),
       ),
     );
