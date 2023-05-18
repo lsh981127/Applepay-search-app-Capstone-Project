@@ -103,16 +103,18 @@ class _googleMapPageState extends State<googleMapPage> {
     mapController = controller;
   }
   Map<String, bool> filters = {
-    "편의점": false,
-    "대형마트" : false,
-    "카페": false,
-    "백화점": false
+    "편의점": true,
+    "대형마트" : true,
+    "카페": true,
+    "백화점": true,
+    "음식점":true,
   };
    List<Icon> icons=[
      Icon(Icons.store),
      Icon(Icons.local_grocery_store),
      Icon(Icons.local_cafe),
-     Icon(Icons.local_mall)
+     Icon(Icons.local_mall),
+     Icon(Icons.restaurant)
   ];
 
   @override
@@ -147,7 +149,11 @@ class _googleMapPageState extends State<googleMapPage> {
             child: Icon(Icons.my_location),
           ),
         ),
-          ListView.builder(
+        SizedBox(
+            height: 50,
+
+            child:ListView.builder(
+                padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
               scrollDirection: Axis.horizontal,
               itemCount: filters.entries.length, //총 갯수
               itemBuilder: (context, index) { //index번째의 view, 0부터 시작
@@ -155,11 +161,13 @@ class _googleMapPageState extends State<googleMapPage> {
                   onTap: () => setState(() => filters[filters.keys.elementAt(index)] = !filters.values.elementAt(index)),
                   child: Chip(
                       avatar: icons[index],
+                      padding: new EdgeInsets.all(5.0),
+                      elevation: 8,
                       backgroundColor: filters.values.elementAt(index) ? Colors.white : Colors.grey,
                       label: Text(filters.keys.elementAt(index))),
                 );
               })
-
+        )
         ]
     )
 
