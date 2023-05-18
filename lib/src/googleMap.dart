@@ -158,7 +158,6 @@ class _googleMapPageState extends State<googleMapPage> {
         ),
         SizedBox(
             height: 50,
-
             child:ListView.builder(
                 //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
               scrollDirection: Axis.horizontal,
@@ -175,8 +174,8 @@ class _googleMapPageState extends State<googleMapPage> {
                       backgroundColor: filters.values.elementAt(index) ? Colors.white : Colors.grey,
                       label: Text(filters.keys.elementAt(index))),
                 ));
-              })
-        )
+              }),
+        ),
         ]
     ),
 
