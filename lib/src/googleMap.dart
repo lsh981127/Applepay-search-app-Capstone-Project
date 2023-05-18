@@ -158,7 +158,9 @@ class _googleMapPageState extends State<googleMapPage> {
         ),
         SizedBox(
             height: 50,
-            child:ListView.builder(
+            child: Expanded(
+              flex:1,
+              child:ListView.builder(
                 //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
               scrollDirection: Axis.horizontal,
               itemCount: filters.entries.length, //총 갯수
@@ -175,16 +177,10 @@ class _googleMapPageState extends State<googleMapPage> {
                       label: Text(filters.keys.elementAt(index))),
                 ));
               }),
+            ),
         ),
         ]
     ),
-
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){
-          setState(() {});
-        },
-        label: Text('버튼 테스트'),
-      ),
     );
   }
 }
