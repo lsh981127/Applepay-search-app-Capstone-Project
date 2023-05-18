@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:newcapstone/src/login_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,8 +22,8 @@ void main() async{
 
 Widget platformChoice() {
   if(kIsWeb) {
-    // return mapPageWeb();
-    return googleMapPage();
+    // return LoginPage();
+    return LoginPage();
   } else {
     if(Platform.isAndroid) {
       // return mapPage();

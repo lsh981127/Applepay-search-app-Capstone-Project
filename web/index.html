@@ -19,7 +19,7 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
-
+  <meta name="google-signin-client_id" content="208267977837-3f8raqrvcs37hnns7oj3164vikec4nt4.apps.googleusercontent.com"/>
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -39,8 +39,13 @@
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5o_5DHjNVRqLb9XD2G5W4XNfOHj_vwS0"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+<!--&lt;!&ndash;  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>&ndash;&gt;-->
+
 </head>
 <body>
+
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
@@ -56,5 +61,20 @@
       });
     });
   </script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMaxD7m66zwmOVWjQ-1kQZbz0Ez0IxF60",
+      authDomain: "new-capstone-480be.firebaseapp.com",
+      projectId: "new-capstone-480be",
+      storageBucket: "new-capstone-480be.appspot.com",
+      messagingSenderId: "208267977837",
+      appId: "1:208267977837:web:0f836839278c8a52054b64",
+      measurementId: "G-T021J0QW7X"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+</script>
+
 </body>
 </html>
