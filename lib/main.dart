@@ -22,7 +22,6 @@ void main() async{
 
 Widget platformChoice() {
   if(kIsWeb) {
-    // return LoginPage();
     return LoginPage();
   } else {
     if(Platform.isAndroid) {

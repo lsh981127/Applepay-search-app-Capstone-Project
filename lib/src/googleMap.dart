@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:custom_map_markers/custom_map_markers.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLongitude=0;
   late GoogleMapController mapController;
   bool _myLocationEnabled = false;
+  //late BitmapDescriptor myMarker;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
@@ -30,6 +32,7 @@ class _googleMapPageState extends State<googleMapPage> {
     super.initState();
     _readCsv();
     _getCurrentLocation();
+    setCustomMapPin();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -50,11 +53,22 @@ class _googleMapPageState extends State<googleMapPage> {
     _loadMarkers();
   }
 
-  Future<Position> getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+  // void setCustomMapPin() async {
+  //   await BitmapDescriptor.fromAssetImage(
+  //       ImageConfiguration(devicePixelRatio: 2.0),
+  //       'assets/marker_images/GS25_bi_(2019).svc')
+  //   .then(
+  //   (icon) {
+  //   setState(() {
+  //   myMarker = icon;
+  //   });
+  //   },
+  //   );
+  //
+  // }
 
-    return position;
+  void setCustomMarker(){
+
   }
 
   Future<void> _readCsv() async {
@@ -75,7 +89,8 @@ class _googleMapPageState extends State<googleMapPage> {
     }).toList();
   }
 
-  void _loadMarkers() {
+  void _loadMarkers() async{
+
     double distanceInMeters;
     List<Marker> markers = [];
     print(_myLocationEnabled);
@@ -92,23 +107,25 @@ class _googleMapPageState extends State<googleMapPage> {
           Marker(
             markerId: MarkerId(name),
             position: LatLng(latitude, longitude),
+            icon: myMarker,
             infoWindow: InfoWindow(
               title: name,
               snippet: address,
-            ),
+          ),
           ),
         );
+      }
         setState(() {
           _markers.addAll(markers);
         });
       }
-    }
     }
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
+
   Map<String, bool> filters = {
     "편의점": true,
     "대형마트" : true,
@@ -127,7 +144,6 @@ class _googleMapPageState extends State<googleMapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Stack(
         children: [
       GoogleMap(
@@ -141,11 +157,14 @@ class _googleMapPageState extends State<googleMapPage> {
         myLocationEnabled: _myLocationEnabled,
         compassEnabled: true,
         myLocationButtonEnabled: false,
+
       ),
         Positioned(
           bottom: 16,
           left: 16,
-          child: FloatingActionButton(
+          child:
+          SizedBox(
+            child:FloatingActionButton(
             onPressed:_getCurrentLocation,
             foregroundColor: Colors.black,
             backgroundColor: Colors.white,
@@ -155,6 +174,7 @@ class _googleMapPageState extends State<googleMapPage> {
             ),
             child: Icon(Icons.my_location),
           ),
+        ),
         ),
         SizedBox(
             height: 50,
@@ -167,20 +187,21 @@ class _googleMapPageState extends State<googleMapPage> {
               itemBuilder: (context, index) {
                   return Padding(//index번째의 view, 0부터 시작
                       padding: new EdgeInsets.all(5.0),
-                child: GestureDetector(
-                  onTap: () => setState(() => filters[filters.keys.elementAt(index)] = !filters.values.elementAt(index)),
-                  child: Chip(
-                      avatar: icons[index],
-                      padding: new EdgeInsets.all(5.0),
-                      elevation: 8,
-                      backgroundColor: filters.values.elementAt(index) ? Colors.white : Colors.grey,
-                      label: Text(filters.keys.elementAt(index))),
-                ));
-              }),
+                      child: GestureDetector(
+                      onTap: () => setState(() => filters[filters.keys.elementAt(index)] = !filters.values.elementAt(index)),
+                      child: Chip(
+                         avatar: icons[index],
+                         padding: new EdgeInsets.all(5.0),
+                         elevation: 8,
+                         backgroundColor: filters.values.elementAt(index) ? Colors.white : Colors.grey,
+                         label: Text(filters.keys.elementAt(index))),
+                      ),
+                  );
+              },
+              ),
             ),
         ),
-        ]
-    ),
+        ]),
     );
   }
 }
