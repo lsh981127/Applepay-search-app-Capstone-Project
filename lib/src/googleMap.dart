@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'package:custom_map_markers/custom_map_markers.dart';
+import 'dart:ui' as ui ;
+import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +22,7 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLongitude=0;
   late GoogleMapController mapController;
   bool _myLocationEnabled = false;
-  //late BitmapDescriptor myMarker;
+  //late Uint8List myMarker;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
@@ -32,7 +33,7 @@ class _googleMapPageState extends State<googleMapPage> {
     super.initState();
     _readCsv();
     _getCurrentLocation();
-    setCustomMapPin();
+    //setCustomMapPin();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -53,22 +54,30 @@ class _googleMapPageState extends State<googleMapPage> {
     _loadMarkers();
   }
 
-  // void setCustomMapPin() async {
-  //   await BitmapDescriptor.fromAssetImage(
-  //       ImageConfiguration(devicePixelRatio: 2.0),
-  //       'assets/marker_images/GS25_bi_(2019).svc')
-  //   .then(
-  //   (icon) {
-  //   setState(() {
-  //   myMarker = icon;
-  //   });
-  //   },
-  //   );
-  //
-  // }
+   // void setCustomMapPin() async {
+   //   myMarker =await getBytesFromAsset(
+   //
+   //       'assets/marker_images/GS25_bi_(2019).svc',100)
+   //
+   //
+   //   ;
+   //
+   // }
 
-  void setCustomMarker(){
+  Future<BitmapDescriptor?> convertWidgetToPNG(GlobalKey globalKey) async {
+    RenderObject? boundary = globalKey.currentContext?.findRenderObject();
 
+    if (boundary != null && boundary is RenderRepaintBoundary) {
+      ui.Image image = await boundary.toImage(pixelRatio: 3);
+      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List? pngBytes = byteData?.buffer.asUint8List();
+
+      if (pngBytes != null) {
+        return BitmapDescriptor.fromBytes(pngBytes);
+      }
+    }
+
+    return null;
   }
 
   Future<void> _readCsv() async {
@@ -107,7 +116,7 @@ class _googleMapPageState extends State<googleMapPage> {
           Marker(
             markerId: MarkerId(name),
             position: LatLng(latitude, longitude),
-            icon: myMarker,
+            icon: BitmapDescriptor.fromBytes(bytes),
             infoWindow: InfoWindow(
               title: name,
               snippet: address,
