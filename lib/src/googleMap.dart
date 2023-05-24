@@ -53,7 +53,7 @@ class _googleMapPageState extends State<googleMapPage> {
     setState(() {
       _myLocationEnabled = true;
     });
-    //_loadMarkers();
+    _loadMarkers();
   }
 
   Future<void> _readCsv() async {
@@ -80,25 +80,32 @@ class _googleMapPageState extends State<googleMapPage> {
 
   void _loadMarkers() {
     List<Marker> markers = [];
-    for (var i=0;i<_gsheetData.length;i++) {
-      final name=_gsheetData[i]['name'];
-      final latitude=_gsheetData[i]['latitude'];
-      final longitude=_gsheetData[i]['longitude'];
-      final address=_gsheetData[i]['address'];
-      markers.add(
-        Marker(
-          markerId: MarkerId(name),
-          position: LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: name,
-            snippet: address,
-          ),
-        ),
-      );
+    double distanceInMeters;
+    if (_myLocationEnabled == true) {
+      for (var i = 0; i < _gsheetData.length; i++) {
+        final name = _gsheetData[i]['name'];
+        final latitude = _gsheetData[i]['latitude'];
+        final longitude = _gsheetData[i]['longitude'];
+        final address = _gsheetData[i]['address'];
+        distanceInMeters = Geolocator.distanceBetween(
+            currentLatitude, currentLongitude, latitude, longitude);
+        if (distanceInMeters <= 500) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(name),
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: name,
+                snippet: address,
+              ),
+            ),
+          );
+        }
+        setState(() {
+          _markers.addAll(markers);
+        });
+      }
     }
-    setState(() {
-      _markers.addAll(markers);
-    });
   }
 
   Future<void> get_gsheet() async {
