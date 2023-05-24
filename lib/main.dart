@@ -24,7 +24,7 @@ Widget platformChoice() {
       // return mapPage();
       return googleMapPage();
     } else {
-      return googleMapPage();
+      return LoginPage();
     }
   }
 }

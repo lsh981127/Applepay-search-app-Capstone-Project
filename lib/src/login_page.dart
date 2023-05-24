@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:newcapstone/src/googleMap.dart';
@@ -18,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   String? name, imageUrl, userEmail, uid;
 
-  Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogleWeb() async {
     // Initialize Firebase
     await Firebase.initializeApp();
     User? user;
@@ -64,40 +65,40 @@ class _LoginPageState extends State<LoginPage> {
     return user;
   }
 
-  // Future<void> signInWithGoogle() async {    //앱용 로그인 코드
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn(
-  //       scopes: ["email", "profile"]).signIn();
-  //   final GoogleSignInAuthentication? googleAuth = await googleUser
-  //       ?.authentication;
-  //
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-  //
-  //   final UserCredential googleUserCredential = await FirebaseAuth.instance
-  //       .signInWithCredential(credential);
-  //   // print(googleUserCredential.additionalUserInfo?.profile);
-  //   // print(googleUserCredential.user?.email);
-  //
-  //   DocumentSnapshot loginCheckDoc = await FirebaseFirestore.instance
-  //       .collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
-  //
-  //   if (!loginCheckDoc.exists) {
-  //     await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(FirebaseAuth.instance.currentUser!.uid)
-  //         .set(
-  //       {
-  //         'timeRegistry': FieldValue.serverTimestamp(),
-  //         'timeUpdate': FieldValue.serverTimestamp(),
-  //         'isStreaming': false,
-  //         'userEmail': googleUserCredential.user?.email,
-  //       },
-  //       SetOptions(merge: true),
-  //     );
-  //   }
-  // }
+  Future<void> signInWithGoogleApp() async {    //앱용 로그인 코드
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: ["email", "profile"]).signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser
+        ?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    final UserCredential googleUserCredential = await FirebaseAuth.instance
+        .signInWithCredential(credential);
+    // print(googleUserCredential.additionalUserInfo?.profile);
+    // print(googleUserCredential.user?.email);
+
+    DocumentSnapshot loginCheckDoc = await FirebaseFirestore.instance
+        .collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+
+    if (!loginCheckDoc.exists) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(
+        {
+          'timeRegistry': FieldValue.serverTimestamp(),
+          'timeUpdate': FieldValue.serverTimestamp(),
+          'isStreaming': false,
+          'userEmail': googleUserCredential.user?.email,
+        },
+        SetOptions(merge: true),
+      );
+    }
+  }
 
 
   @override
@@ -112,9 +113,7 @@ class _LoginPageState extends State<LoginPage> {
               if(!context.mounted) {
                 return ;
               }
-              // showAlertDialog();
-              // await signInWithGoogle();
-              await signInWithGoogle();
+              kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
               const googleMapPage()), (Route<dynamic> route) => false);
             },
