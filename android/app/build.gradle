@@ -37,6 +37,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    task wrapper(type: Wrapper) {
+        gradleVersion = '7.0'
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -67,6 +71,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
 }
 
 flutter {
@@ -82,3 +87,4 @@ dependencies {
 
 }
 
+tasks.register("prepareKotlinBuildScriptModel"){}
