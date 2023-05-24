@@ -30,7 +30,7 @@ class _googleMapPageState extends State<googleMapPage> {
   @override
   void initState() {
     super.initState();
-    _readCsv();
+    // _readCsv();
     _getCurrentLocation();
     get_gsheet().then((_){
       _loadMarkers();
@@ -53,7 +53,7 @@ class _googleMapPageState extends State<googleMapPage> {
     setState(() {
       _myLocationEnabled = true;
     });
-    _loadMarkers();
+    //_loadMarkers();
   }
 
   Future<void> _readCsv() async {
@@ -96,6 +96,9 @@ class _googleMapPageState extends State<googleMapPage> {
         ),
       );
     }
+    setState(() {
+      _markers.addAll(markers);
+    });
   }
 
   Future<void> get_gsheet() async {
