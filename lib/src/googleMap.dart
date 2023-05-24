@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'dart:ui' as ui ;
+import 'dart:ui' as ui;
 import 'dart:html';
 
 import 'package:flutter/material.dart';
@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:csv/csv.dart';
 import 'package:proj4dart/proj4dart.dart';
-
 
 class googleMapPage extends StatefulWidget {
   const googleMapPage({Key? key}) : super(key: key);
@@ -18,33 +17,32 @@ class googleMapPage extends StatefulWidget {
 }
 
 class _googleMapPageState extends State<googleMapPage> {
-  double currentLatitude=0;
-  double currentLongitude=0;
+  double currentLatitude = 0;
+  double currentLongitude = 0;
   late GoogleMapController mapController;
   bool _myLocationEnabled = false;
-  //late Uint8List myMarker;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
-  List<Map<String,dynamic>> _csvData=[];
+  List<Map<String, dynamic>> _csvData = [];
 
   @override
   void initState() {
     super.initState();
     _readCsv();
     _getCurrentLocation();
-    //setCustomMapPin();
   }
 
   Future<void> _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
-    final LatLng currentLocation = LatLng(position.latitude, position.longitude);
-    print(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
+    final LatLng currentLocation =
+        LatLng(position.latitude, position.longitude);
     final cameraPosition = CameraPosition(
-      bearing:0,
-      target: currentLocation ,
+      bearing: 0,
+      target: currentLocation,
       zoom: 17,
     );
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
@@ -54,76 +52,52 @@ class _googleMapPageState extends State<googleMapPage> {
     _loadMarkers();
   }
 
-   // void setCustomMapPin() async {
-   //   myMarker =await getBytesFromAsset(
-   //
-   //       'assets/marker_images/GS25_bi_(2019).svc',100)
-   //
-   //
-   //   ;
-   //
-   // }
-
-  Future<BitmapDescriptor?> convertWidgetToPNG(GlobalKey globalKey) async {
-    RenderObject? boundary = globalKey.currentContext?.findRenderObject();
-
-    if (boundary != null && boundary is RenderRepaintBoundary) {
-      ui.Image image = await boundary.toImage(pixelRatio: 3);
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List? pngBytes = byteData?.buffer.asUint8List();
-
-      if (pngBytes != null) {
-        return BitmapDescriptor.fromBytes(pngBytes);
-      }
-    }
-
-    return null;
-  }
-
   Future<void> _readCsv() async {
-    var srcProj=Projection.add('EPSG:2097','+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
-    var dstnProj=Projection.get('EPSG:4326')!;
+    var srcProj = Projection.add('EPSG:2097',
+        '+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
+    var dstnProj = Projection.get('EPSG:4326')!;
     final csvData = await rootBundle.loadString('data_prototype_utf-8.csv');
-    List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(csvData);
+    List<List<dynamic>> rowsAsListOfValues =
+        const CsvToListConverter().convert(csvData);
     List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues.sublist(1);
     _csvData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(x:double.parse(row[3].toString()), y:double.parse(row[4].toString()));
-      final latLong=srcProj.transform(dstnProj, epsg2097Coords);
-      return{
-        'name':row[0],
-        'latitude':latLong.toArray()[1],
-        'longitude':latLong.toArray()[0],
-        'address':row[2]
+      final epsg2097Coords = Point(
+          x: double.parse(row[3].toString()),
+          y: double.parse(row[4].toString()));
+      final latLong = srcProj.transform(dstnProj, epsg2097Coords);
+      return {
+        'name': row[0],
+        'latitude': latLong.toArray()[1],
+        'longitude': latLong.toArray()[0],
+        'address': row[2]
       };
     }).toList();
   }
 
-  void _loadMarkers() async{
-
+  Future<void> _loadMarkers() async {
     double distanceInMeters;
     List<Marker> markers = [];
     print(_myLocationEnabled);
-    if(_myLocationEnabled == true){
-    for (var i = 0; i < _csvData.length; i++) {
-      final name = _csvData[i]['name'];
-      final latitude = _csvData[i]['latitude'];
-      final longitude = _csvData[i]['longitude'];
-      final address = _csvData[i]['address'];
-      distanceInMeters = Geolocator.distanceBetween(currentLatitude, currentLongitude, latitude, longitude);
-      print(distanceInMeters);
-      if (distanceInMeters <= 500) {
-        markers.add(
-          Marker(
-            markerId: MarkerId(name),
-            position: LatLng(latitude, longitude),
-            icon: BitmapDescriptor.fromBytes(bytes),
-            infoWindow: InfoWindow(
-              title: name,
-              snippet: address,
-          ),
-          ),
-        );
-      }
+    if (_myLocationEnabled == true) {
+      for (var i = 0; i < _csvData.length; i++) {
+        final name = _csvData[i]['name'];
+        final latitude = _csvData[i]['latitude'];
+        final longitude = _csvData[i]['longitude'];
+        final address = _csvData[i]['address'];
+        distanceInMeters = Geolocator.distanceBetween(
+            currentLatitude, currentLongitude, latitude, longitude);
+        if (distanceInMeters <= 500) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(name),
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: name,
+                snippet: address,
+              ),
+            ),
+          );
+        }
         setState(() {
           _markers.addAll(markers);
         });
@@ -137,84 +111,80 @@ class _googleMapPageState extends State<googleMapPage> {
 
   Map<String, bool> filters = {
     "편의점": true,
-    "대형마트" : true,
+    "대형마트": true,
     "카페": true,
     "백화점": true,
-    "음식점":true,
+    "음식점": true,
   };
-   List<Icon> icons=[
-     Icon(Icons.store),
-     Icon(Icons.local_grocery_store),
-     Icon(Icons.local_cafe),
-     Icon(Icons.local_mall),
-     Icon(Icons.restaurant)
+  List<Icon> icons = [
+    Icon(Icons.store),
+    Icon(Icons.local_grocery_store),
+    Icon(Icons.local_cafe),
+    Icon(Icons.local_mall),
+    Icon(Icons.restaurant)
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-      GoogleMap(
-        mapType: MapType.normal,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 16.0,
+      body: Stack(children: [
+        GoogleMap(
+          mapType: MapType.normal,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _center,
+            zoom: 16.0,
+          ),
+          markers: _markers.toSet(),
+          myLocationEnabled: _myLocationEnabled,
+          compassEnabled: true,
+          myLocationButtonEnabled: false,
         ),
-        markers: _markers.toSet(),
-        myLocationEnabled: _myLocationEnabled,
-        compassEnabled: true,
-        myLocationButtonEnabled: false,
-
-      ),
         Positioned(
           bottom: 16,
           left: 16,
-          child:
-          SizedBox(
-            child:FloatingActionButton(
-            onPressed:_getCurrentLocation,
-            foregroundColor: Colors.black,
-            backgroundColor: Colors.white,
-            elevation: 8, // 그림자 크기
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
+          child: SizedBox(
+            child: FloatingActionButton(
+              onPressed: _getCurrentLocation,
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              elevation: 8,
+              // 그림자 크기
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
+              ),
+              child: Icon(Icons.my_location),
             ),
-            child: Icon(Icons.my_location),
           ),
         ),
-        ),
         SizedBox(
-            height: 50,
-            child: Expanded(
-              flex:1,
-              child:ListView.builder(
-                //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
-              scrollDirection: Axis.horizontal,
-              itemCount: filters.entries.length, //총 갯수
-              itemBuilder: (context, index) {
-                  return Padding(//index번째의 view, 0부터 시작
+          height: 50,
+          child: ListView.builder(
+            //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
+            scrollDirection: Axis.horizontal,
+            itemCount: filters.entries.length, //총 갯수
+            itemBuilder: (context, index) {
+              return Padding(
+                //index번째의 view, 0부터 시작
+                padding: new EdgeInsets.all(5.0),
+                child: GestureDetector(
+                  onTap: () => setState(() =>
+                      filters[filters.keys.elementAt(index)] =
+                          !filters.values.elementAt(index)),
+                  child: Chip(
+                      avatar: icons[index],
                       padding: new EdgeInsets.all(5.0),
-                      child: GestureDetector(
-                      onTap: () => setState(() => filters[filters.keys.elementAt(index)] = !filters.values.elementAt(index)),
-                      child: Chip(
-                         avatar: icons[index],
-                         padding: new EdgeInsets.all(5.0),
-                         elevation: 8,
-                         backgroundColor: filters.values.elementAt(index) ? Colors.white : Colors.grey,
-                         label: Text(filters.keys.elementAt(index))),
-                      ),
-                  );
-              },
-              ),
-            ),
+                      elevation: 8,
+                      backgroundColor: filters.values.elementAt(index)
+                          ? Colors.white
+                          : Colors.grey,
+                      label: Text(filters.keys.elementAt(index))),
+                ),
+              );
+            },
+          ),
         ),
-        ]),
+      ]),
     );
   }
 }
-
-
-
-
