@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:csv/csv.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:ui' as ui;
-import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -25,14 +23,14 @@ class _googleMapPageState extends State<googleMapPage> {
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
   List<Map<String, dynamic>> _csvData = [];
-  List<Map<String,dynamic>> _gsheetData=[];
+  List<Map<String, dynamic>> _gsheetData = [];
 
   @override
   void initState() {
     super.initState();
     // _readCsv();
     _getCurrentLocation();
-    get_gsheet().then((_){
+    get_gsheet().then((_) {
       _loadMarkers();
     });
   }
@@ -126,28 +124,31 @@ class _googleMapPageState extends State<googleMapPage> {
       ''';
 
     final gsheets = GSheets(credentials);
-    final spreadsheet = await gsheets.spreadsheet('1JXnZLWDw_uF5h9--1t6r2yLQappqFUGnSE1J3c5xt1I');
+    final spreadsheet = await gsheets
+        .spreadsheet('1JXnZLWDw_uF5h9--1t6r2yLQappqFUGnSE1J3c5xt1I');
 
     final worksheet = spreadsheet.worksheetByTitle('시트1');
     final valueRange = await worksheet?.values.allRows();
-    final data=valueRange?.map((row) => List<dynamic>.from(row)).toList();
+    final data = valueRange?.map((row) => List<dynamic>.from(row)).toList();
 
-    var srcProj=Projection.add('EPSG:2097','+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
-    var dstnProj=Projection.get('EPSG:4326')!;
+    var srcProj = Projection.add('EPSG:2097',
+        '+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
+    var dstnProj = Projection.get('EPSG:4326')!;
 
     List<List>? rowsAsListOfValues = data;
     List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues!.sublist(1);
     _gsheetData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(x:double.parse(row[3].toString()), y:double.parse(row[4].toString()));
-      final latLong=srcProj.transform(dstnProj, epsg2097Coords);
-      return{
-        'name':row[0],
-        'latitude':latLong.toArray()[1],
-        'longitude':latLong.toArray()[0],
-        'address':row[2]
+      final epsg2097Coords = Point(
+          x: double.parse(row[3].toString()),
+          y: double.parse(row[4].toString()));
+      final latLong = srcProj.transform(dstnProj, epsg2097Coords);
+      return {
+        'name': row[0],
+        'latitude': latLong.toArray()[1],
+        'longitude': latLong.toArray()[0],
+        'address': row[2]
       };
     }).toList();
-
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -204,7 +205,7 @@ class _googleMapPageState extends State<googleMapPage> {
           ),
         ),
         SizedBox(
-          height: 50,
+          height: 100,
           child: ListView.builder(
             //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
             scrollDirection: Axis.horizontal,
