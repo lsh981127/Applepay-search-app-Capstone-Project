@@ -3,7 +3,6 @@ import 'dart:io' show Platform;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
