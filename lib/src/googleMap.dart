@@ -5,7 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:csv/csv.dart';
+import 'package:gsheets/gsheets.dart';
 import 'package:proj4dart/proj4dart.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'home_cubit.dart';
+import 'home_page.dart';
+import 'login_page.dart';
+
 
 
 class googleMapPage extends StatefulWidget {
@@ -15,6 +21,28 @@ class googleMapPage extends StatefulWidget {
   State<googleMapPage> createState() => _googleMapPageState();
 }
 
+class GSheetsAPIConfig {
+  static const _credentials = r'''
+  {
+  "type": "service_account",
+  "project_id": "capstonemapapi-382008",
+  "private_key_id": "215e01cca1759d3a79de65abe105fed59e650844",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDDZwoJxWI+AjU1\nJfv2SKH+o4gQUViiRrS/2tGihd3JktNgMxLWqAFMQrSZO19QzpRJqeA5y1qn/xKV\nFLD7EJ3O9RlNDYyHyK5gKilzzRZRnbJEnR/0NsH+QU0sLTB2u/Xr8BBd9kx1Gv1b\nUeN1OCwNEHLkT8YUMiIYtmm8v5xBppi4tL+28ZWX5yM/87KZ9utgOKGQ/6wnp/mz\nmzdJhkOL11fRNgCDiFvbZbY0K+yVq8zeRjXJryy012eviMepDUP3jSzOMjrNZoTg\nwiauMHVy7/95kwB9c+88H8FjZLh7tqYGz2f2hR2HAboYBOTHpB672e0OMRE+Ubsg\n2cOkTFepAgMBAAECggEABKaWrWiGb+hjNiUgdppVn2HACCIPhH6UqGj/tVO6ACVf\npOSs+EaeZUoZ0fiA9RjoRvU6nNWIuQKQAX6xFFYEaNvE4uRwKakum/j/lz3UiqkW\nCEkJwikYJpeM9oC1gcCegqOU7XpCaUUfrkU9hIQ2Ptywh1uYtiatUL5Ct6yDKRLQ\neXGDKEwgDOpyCjUQItU98jvfVIWjQ/9Y6gkv0XP6PXE+p2OW8ONdnpomkfV0CvLS\nUoTGP8kbmG3Os9++OZUiA9lDQuzsb+I5+szv4pglB8LeIqievZ6P7L8k3R34f82H\n8Es0ncUtLX/BOPrNU1WKLyyZ6PmVxmW/gtVceG7NAQKBgQD5BpK4Ee+ohKcCc5Hr\nPVxS0qQsoYCeAWxuImlFIvFMXdo37nMc8eE0HVZd/wYAZQ+338sap9mapZh7GMC6\nonf8pz8Cat/n/GAPSBK6XhWHUICjUTpQ20lEwz6AcrfuVbRxUW0nWwcXJXfqvoD8\nXgZDwBB2aBbD5Ap70UEx/ovSaQKBgQDI4AG1gZ7gkWeiNZfozfnnY61PepDlq+rQ\nBkA4kAkFf6QZ2JnAA2R+bjLSKIHNYPcfzCmFjeBJBSQYpx7Mqh/xrGLFnVzEh1X4\nek8w3nJ3w8Ei2RbV8Y0TdVcL4vGCcBOXIJXUBMEvmd60q0U39gshBxd9HnxSqX1l\nBI8xCrkzQQKBgE8K+RMYDlwNDv3GNTDX3zAi0B2ifbKpfQNQRN2/A5xbxeIu+7ba\nR8NE9J8NTZhee6i/jjY9xOJDYazg5HvZCgDWDTf1OHDoOI1hMSCasHas5MfyBnKX\nyB/dYT9gKmWqKoY1dFIjoJKGQBPwt/xi09Y5ZoBO9brj7Tfz6Z+2zibRAoGBAIVK\nVvf4tdLvySOSimV5X+0RcCv/+WvdIue8bhraQJI8e0iHOKZ32dQnDWP0awU75V9d\nGuQ7G2t4lNYi9sX50U6NA9F7NNZXs00445la0fv0khCsmoGGUgVqZENH6NeTxPwQ\nLDtOmF4crPGXgEu84O+ehBCLDRXQz5sbZmS1Z+TBAoGABTJIeJlLy+SWGJmLBr1b\nmMwySD6nRZYBLL/v+UONjLAbZGr7i0sJvKHw4IOSo+P1mf+YF3G31iOemm0ZugUT\nDwzStEZrKSiUfuiFyDN80m3Wj62cJhiZjVJfpp+CUoNIo4GJoV2tjJGo0fSOXqCh\n+q00enwFhO9gm0wchI/wslI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "newcapstonegsheets@capstonemapapi-382008.iam.gserviceaccount.com",
+  "client_id": "110691024782823365143",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/newcapstonegsheets%40capstonemapapi-382008.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+  }
+  ''';
+  static final dataGSheets = GSheets(_credentials);
+}
+class RealDataSetService {
+  final String _spreadsheetId = '1JXnZLWDw_uF5h9--1t6r2yLQappqFUGnSE1J3c5xt1I';
+}
+
 class _googleMapPageState extends State<googleMapPage> {
   late GoogleMapController mapController;
 
@@ -22,6 +50,7 @@ class _googleMapPageState extends State<googleMapPage> {
   final Set<Marker> _markers = {};
   List<Map<String,dynamic>> _csvData=[];
 
+  
   @override
   void initState() {
     super.initState();
@@ -85,24 +114,37 @@ class _googleMapPageState extends State<googleMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: GoogleMap(
-        mapType: MapType.normal,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: _center,
-          zoom: 16.0,
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Applepay Map',
+        theme: ThemeData(
+          primaryColor: Colors.white,
         ),
-        markers: _markers.toSet(),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){
-          setState(() {});
-        },
-        label: Text('버튼 테스트'),
-      ),
-    );
+        routes: {
+          '/': (context) => LoginPage(),
+          '/start': (context) {
+            return BlocProvider(
+                create: (_) => HomeCubit(), child: googleMapPage());
+          }
+        });
+    // return Scaffold(
+    //   appBar: AppBar(),
+    //   body: GoogleMap(
+    //     mapType: MapType.normal,
+    //     onMapCreated: _onMapCreated,
+    //     initialCameraPosition: CameraPosition(
+    //       target: _center,
+    //       zoom: 16.0,
+    //     ),
+    //     markers: _markers.toSet(),
+    //   ),
+    //   floatingActionButton: FloatingActionButton.extended(
+    //     onPressed: (){
+    //       setState(() {});
+    //     },
+    //     label: Text('버튼 테스트'),
+    //   ),
+    // );
   }
 }
 
