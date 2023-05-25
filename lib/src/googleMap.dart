@@ -30,16 +30,12 @@ class _googleMapPageState extends State<googleMapPage> {
   @override
   void initState() {
     super.initState();
-    // _readCsv();
     _getCurrentLocation();
-    get_gsheet().then((_){
-      _loadMarkers();
-    });
+    get_gsheet();
   }
 
   Future<void> _getCurrentLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
     final LatLng currentLocation =
@@ -54,28 +50,6 @@ class _googleMapPageState extends State<googleMapPage> {
       _myLocationEnabled = true;
     });
     _loadMarkers();
-  }
-
-  Future<void> _readCsv() async {
-    var srcProj = Projection.add('EPSG:2097',
-        '+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
-    var dstnProj = Projection.get('EPSG:4326')!;
-    final csvData = await rootBundle.loadString('data_prototype_utf-8.csv');
-    List<List<dynamic>> rowsAsListOfValues =
-        const CsvToListConverter().convert(csvData);
-    List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues.sublist(1);
-    _csvData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(
-          x: double.parse(row[3].toString()),
-          y: double.parse(row[4].toString()));
-      final latLong = srcProj.transform(dstnProj, epsg2097Coords);
-      return {
-        'name': row[0],
-        'latitude': latLong.toArray()[1],
-        'longitude': latLong.toArray()[0],
-        'address': row[2]
-      };
-    }).toList();
   }
 
   void _loadMarkers() {
@@ -126,7 +100,7 @@ class _googleMapPageState extends State<googleMapPage> {
       ''';
 
     final gsheets = GSheets(credentials);
-    final spreadsheet = await gsheets.spreadsheet('1JXnZLWDw_uF5h9--1t6r2yLQappqFUGnSE1J3c5xt1I');
+    final spreadsheet = await gsheets.spreadsheet('1NfTbHtaI6g9GLmtd3GOQ7CM4wLT_mGTOoDfSsq5ZizY');
 
     final worksheet = spreadsheet.worksheetByTitle('시트1');
     final valueRange = await worksheet?.values.allRows();
@@ -138,7 +112,7 @@ class _googleMapPageState extends State<googleMapPage> {
     List<List>? rowsAsListOfValues = data;
     List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues!.sublist(1);
     _gsheetData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(x:double.parse(row[3].toString()), y:double.parse(row[4].toString()));
+      final epsg2097Coords = Point(x:double.parse(row[4].toString()), y:double.parse(row[5].toString()));
       final latLong=srcProj.transform(dstnProj, epsg2097Coords);
       return{
         'name':row[0],
