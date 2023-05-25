@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:newcapstone/src/login_page.dart';
 import 'package:newcapstone/src/home_page.dart';
 import 'package:newcapstone/src/home_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
