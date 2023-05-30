@@ -48,7 +48,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                     fontSize: 12),
               ),
               Text(
-                "동국대학교",
+                "애플페이_캡스톤",
                 style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
