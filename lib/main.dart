@@ -7,6 +7,7 @@ import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:newcapstone/src/login_page.dart';
+import 'package:newcapstone/src/freeforum.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,7 @@ void main() async{
 
 Widget platformChoice() {
   if(kIsWeb) {
-    return LoginPage();
+    return googleMapPage();
   } else {
     if(Platform.isAndroid) {
       // return mapPage();
