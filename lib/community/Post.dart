@@ -1,4 +1,4 @@
-import 'googleMap.dart';
+import '../src/googleMap.dart';
 
 class Post {
   String title;
