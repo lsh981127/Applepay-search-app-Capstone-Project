@@ -49,7 +49,6 @@ class _googleMapPageState extends State<googleMapPage> {
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
-  List<Map<String, dynamic>> _csvData = [];
   List<Map<String,dynamic>> _gsheetData=[];
 
   
@@ -80,27 +79,6 @@ class _googleMapPageState extends State<googleMapPage> {
       _myLocationEnabled = true;
     });
     _loadMarkers();
-  }
-
-  Future<void> _readCsv() async {
-    var srcProj=Projection.add('EPSG:2097','+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
-    var dstnProj=Projection.get('EPSG:4326')!;
-    final csvData = await rootBundle.loadString('data_prototype_utf-8.csv');
-    List<List<dynamic>> rowsAsListOfValues =
-        const CsvToListConverter().convert(csvData);
-    List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues.sublist(1);
-    _csvData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(
-          x: double.parse(row[3].toString()),
-          y: double.parse(row[4].toString()));
-      final latLong = srcProj.transform(dstnProj, epsg2097Coords);
-      return {
-        'name': row[0],
-        'latitude': latLong.toArray()[1],
-        'longitude': latLong.toArray()[0],
-        'address': row[2]
-      };
-    }).toList();
   }
 
   void _loadMarkers() {
