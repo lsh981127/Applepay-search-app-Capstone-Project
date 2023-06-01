@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Post.dart';
-import 'color.dart';
+import '../community/color.dart';
 import 'database.dart';
 import 'search.dart';
 import 'freeforum_detail.dart';
