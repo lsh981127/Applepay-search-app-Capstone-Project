@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:newcapstone/src/freeforum.dart';
 import 'package:newcapstone/src/googleMap.dart';
-import 'home_cubit.dart';
 import 'package:flutter/cupertino.dart';
+
+import '../community/freeforum.dart';
+import '../community/home_cubit.dart';
 
 
 class HomePage extends StatelessWidget {
