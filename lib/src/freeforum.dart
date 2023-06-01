@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'Post.dart';
 import 'color.dart';
 import 'database.dart';
-import 'freeforum_detail.dart';
 import 'search.dart';
+import 'freeforum_detail.dart';
 
 
 class freeForum extends StatelessWidget {
