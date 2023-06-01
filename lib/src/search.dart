@@ -97,11 +97,11 @@ class _SearchState extends State<Search> {
                                         const BorderRadius.all(Radius.circular(20)),
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade200, width: 2)),
-                                    contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                                    contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                                     hintText: '글 제목, 내용, 해시태그',
-                                    hintStyle: TextStyle(
+                                    hintStyle: const TextStyle(
                                       fontSize: 18,
-                                    )),
+                                    ),),
                                 onSubmitted: (String value) async {
                                   setState(() {
                                     result = 0;

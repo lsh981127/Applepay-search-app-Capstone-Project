@@ -30,7 +30,7 @@ Widget platformChoice() {
       // return mapPage();
       return googleMapPage();
     } else {
-      return LoginPage();
+      return googleMapPage();
     }
   }
 }
