@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Post.dart';
 import 'color.dart';
-import 'freeforum.dart';
 
 class freeForumDetail extends StatefulWidget {
   BuildContext context;
