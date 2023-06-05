@@ -1,12 +1,23 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:proj4dart/proj4dart.dart';
+
+import '../community/freeforum.dart';
+import '../community/home_cubit.dart';
+import '../community/profile.dart';
 
 
 class googleMapPage extends StatefulWidget {
@@ -49,15 +60,42 @@ class _googleMapPageState extends State<googleMapPage> {
   List<Map<String, dynamic>> _csvData = [];
   List<Map<String,dynamic>> _gsheetData=[];
 
+
+  var userInfoName = "";
+  var userInfoUid = "";
+  var userInfoEmail = "";
+  var userInfoPhoto = "";
+
+  Future<void> bringData() async {
+    var snapshot = FirebaseFirestore.instance
+        .collection("users")
+        .doc("${FirebaseAuth.instance.currentUser?.uid}")
+        .get();
+
+    var data = await snapshot;
+
+    var name = (data.data()?["name"].toString() ?? "");
+    var uid = (data.data()?["uid"].toString() ?? "");
+    var email = (data.data()?["userEmail"].toString() ?? "");
+    var photo = (data.data()?["imageUrl"].toString() ?? "");
+
+    setState(() {
+      userInfoName = name;
+      userInfoUid = uid;
+      userInfoEmail = email;
+      userInfoPhoto = photo;
+    });
+  }
+
   
   @override
   void initState() {
     super.initState();
-    // _readCsv();
     _getCurrentLocation();
     get_gsheet().then((_){
       _loadMarkers();
     });
+    bringData();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -79,25 +117,91 @@ class _googleMapPageState extends State<googleMapPage> {
     _loadMarkers();
   }
 
-  Future<void> _readCsv() async {
-    var srcProj=Projection.add('EPSG:2097','+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
-    var dstnProj=Projection.get('EPSG:4326')!;
-    final csvData = await rootBundle.loadString('data_prototype_utf-8.csv');
-    List<List<dynamic>> rowsAsListOfValues =
-        const CsvToListConverter().convert(csvData);
-    List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues.sublist(1);
-    _csvData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(
-          x: double.parse(row[3].toString()),
-          y: double.parse(row[4].toString()));
-      final latLong = srcProj.transform(dstnProj, epsg2097Coords);
-      return {
-        'name': row[0],
-        'latitude': latLong.toArray()[1],
-        'longitude': latLong.toArray()[0],
-        'address': row[2]
-      };
-    }).toList();
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  String? name, imageUrl, userEmail, uid;
+
+
+
+
+  Future<User?> signInWithGoogleWeb() async {
+    // Initialize Firebase
+    await Firebase.initializeApp();
+    User? user;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    // The `GoogleAuthProvider` can only be
+    // used while running on the web
+    GoogleAuthProvider authProvider = GoogleAuthProvider();
+
+    try {
+      final UserCredential userCredential =
+      await auth.signInWithPopup(authProvider);
+      user = userCredential.user;
+    } catch (e) {
+      print(e);
+    }
+
+    if (user != null) {
+      uid = user.uid;
+      name = user.displayName;
+      userEmail = user.email;
+      imageUrl = user.photoURL;
+      //
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // prefs.setBool('auth', true);
+      // print("name: $name");
+      // print("userEmail: $userEmail");
+      // print("imageUrl: $imageUrl");
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(
+        {
+          'uid': uid,
+          'name': name,
+          'userEmail': userEmail,
+          'imageUrl': imageUrl,
+        },
+        SetOptions(merge: true),
+      );
+
+    }
+    return user;
+  }
+
+  Future<void> signInWithGoogleApp() async {    //앱용 로그인 코드
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: ["email", "profile"]).signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser
+        ?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    final UserCredential googleUserCredential = await FirebaseAuth.instance
+        .signInWithCredential(credential);
+    // print(googleUserCredential.additionalUserInfo?.profile);
+    // print(googleUserCredential.user?.email);
+
+    DocumentSnapshot loginCheckDoc = await FirebaseFirestore.instance
+        .collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+
+    if (!loginCheckDoc.exists) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(
+        {
+          'timeRegistry': FieldValue.serverTimestamp(),
+          'timeUpdate': FieldValue.serverTimestamp(),
+          'isStreaming': false,
+          'userEmail': googleUserCredential.user?.email,
+        },
+        SetOptions(merge: true),
+      );
+    }
   }
 
   void _loadMarkers() {
@@ -192,8 +296,191 @@ class _googleMapPageState extends State<googleMapPage> {
     Icon(Icons.restaurant)
   ];
 
-  @override
-  Widget build(BuildContext context) {
+  Widget webDrawer() {
+    return Scaffold(
+      appBar: AppBar(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Column(
+              children: [
+                UserAccountsDrawerHeader(
+                  accountName: Text('사용자 이름 : ${userInfoName}'),
+                  accountEmail: Text('사용자 이메일 : ${userInfoEmail}'),
+                ),
+                SizedBox(height: 10,),
+                ListTile(
+                  leading: Icon(
+                    Icons.home,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Home'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.space_dashboard_outlined,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Time'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.list_bullet,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('List'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                        freeForum()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.bell,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Alert'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.location,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Campic'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const ProfilePage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                (FirebaseAuth.instance.currentUser == null) ?
+                ElevatedButton(
+                  onPressed: () async {
+                    if(!context.mounted) {
+                      return ;
+                    }
+                    // showAlertDialog();
+                    // await signInWithGoogle();
+                    kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      elevation: 0.0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(50)
+                        ),
+                      ),
+                      side: const BorderSide(
+                        color: Colors.white,
+                      )
+                  ),
+                  child: Container(
+                    height: 55,
+                    width: 300,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text('구글 로그인',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              height: 1.5
+                          ),
+                        ),
+                        SizedBox(width: 10,),
+                      ],
+                    ),
+                  ),
+                ) : Container(),
+              ],
+            ),
+          ],
+        ),
+      ),
+      body: Stack(children: [
+        GoogleMap(
+          mapType: MapType.normal,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _center,
+            zoom: 16.0,
+          ),
+          markers: _markers.toSet(),
+          myLocationEnabled: _myLocationEnabled,
+          compassEnabled: true,
+          myLocationButtonEnabled: false,
+        ),
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: SizedBox(
+            child: FloatingActionButton(
+              onPressed: _getCurrentLocation,
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              elevation: 8,
+              // 그림자 크기
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
+              ),
+              child: Icon(Icons.my_location),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 50,
+          child: ListView.builder(
+            //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
+            scrollDirection: Axis.horizontal,
+            itemCount: filters.entries.length, //총 갯수
+            itemBuilder: (context, index) {
+              return Padding(
+                //index번째의 view, 0부터 시작
+                padding: new EdgeInsets.all(5.0),
+                child: GestureDetector(
+                  onTap: () => setState(() =>
+                  filters[filters.keys.elementAt(index)] =
+                  !filters.values.elementAt(index)),
+                  child: Chip(
+                      avatar: icons[index],
+                      padding: new EdgeInsets.all(5.0),
+                      elevation: 8,
+                      backgroundColor: filters.values.elementAt(index)
+                          ? Colors.white
+                          : Colors.grey,
+                      label: Text(filters.keys.elementAt(index))),
+                ),
+              );
+            },
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget appBottom() {
     return Scaffold(
       body: Stack(children: [
         GoogleMap(
@@ -237,8 +524,8 @@ class _googleMapPageState extends State<googleMapPage> {
                 padding: new EdgeInsets.all(5.0),
                 child: GestureDetector(
                   onTap: () => setState(() =>
-                      filters[filters.keys.elementAt(index)] =
-                          !filters.values.elementAt(index)),
+                  filters[filters.keys.elementAt(index)] =
+                  !filters.values.elementAt(index)),
                   child: Chip(
                       avatar: icons[index],
                       padding: new EdgeInsets.all(5.0),
@@ -252,7 +539,13 @@ class _googleMapPageState extends State<googleMapPage> {
             },
           ),
         ),
-      ]),
+      ],
+      ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return kIsWeb ? webDrawer() : appBottom();
   }
 }

@@ -8,6 +8,7 @@ import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:newcapstone/src/home_page.dart';
+import 'package:newcapstone/src/login_page.dart';
 
 import 'community/home_cubit.dart';
 
@@ -51,7 +52,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) {
           return BlocProvider(
-              create: (_) => HomeCubit(), child: HomePage());
+              create: (_) => HomeCubit(), child: googleMapPage());
         }
       });
   }
