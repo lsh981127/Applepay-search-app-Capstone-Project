@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:csv/csv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -621,6 +620,7 @@ class _googleMapPageState extends State<googleMapPage> {
             ),
           ),
         ),
+        Visibility(child: button),
         SizedBox(
           height: 50,
           child: ListView.builder(
