@@ -53,6 +53,8 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLatitude = 0;
   double currentLongitude = 0;
   late GoogleMapController mapController;
+  late BitmapDescriptor markerAppIcon1, markerAppIcon2, markerAppIcon3, markerAppIcon4;
+
   bool _myLocationEnabled = false;
   late Uint8List markerIcon1,markerIcon2,markerIcon3,markerIcon4;
 
@@ -94,9 +96,9 @@ class _googleMapPageState extends State<googleMapPage> {
     super.initState();
     _getCurrentLocation();
     get_gsheet().then((_) {
+      setCustomMapPin();
       _loadMarkers();
     });
-    setCustomMapPin();
     bringData();
   }
 
@@ -234,7 +236,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
-                icon: BitmapDescriptor.fromBytes(markerIcon1),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon1) : markerAppIcon1,
                 position: LatLng(latitude, longitude),
                 infoWindow: InfoWindow(
                   title: name,
@@ -246,7 +248,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
-                icon: BitmapDescriptor.fromBytes(markerIcon2),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon2) : markerAppIcon2,
                 position: LatLng(latitude, longitude),
                 infoWindow: InfoWindow(
                   title: name,
@@ -258,7 +260,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
-                icon: BitmapDescriptor.fromBytes(markerIcon3),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon3) : markerAppIcon3,
                 position: LatLng(latitude, longitude),
                 infoWindow: InfoWindow(
                   title: name,
@@ -270,7 +272,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
                 Marker(
                   markerId: MarkerId(name),
-                  icon: BitmapDescriptor.fromBytes(markerIcon4),
+                  icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon4) : markerAppIcon4,
                   position: LatLng(latitude, longitude),
                   infoWindow: InfoWindow(
                     title: name,
@@ -331,10 +333,30 @@ class _googleMapPageState extends State<googleMapPage> {
   }
 
   void setCustomMapPin() async{
-    markerIcon1=await getBytesFromAsset('marker_images/green.png',5);
-    markerIcon2=await getBytesFromAsset('marker_images/purple.png',5);
-    markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
-    markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
+    if(kIsWeb) {
+      markerIcon1=await getBytesFromAsset('marker_images/green.png',5);
+      markerIcon2=await getBytesFromAsset('marker_images/purple.png',5);
+      markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
+      markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
+    } else {
+      // markerAppIcon1 = await BitmapDescriptor.fromAssetImage(
+      //     const ImageConfiguration(size: Size(5,5)),
+      //     'marker_images/green.png');
+      // markerAppIcon2 = await BitmapDescriptor.fromAssetImage(
+      //     const ImageConfiguration(size: Size(5,5)),
+      //     'marker_images/purple.png');
+      // markerAppIcon3 = await BitmapDescriptor.fromAssetImage(
+      //     const ImageConfiguration(size: Size(5,5)),
+      //     'marker_images/red.png');
+      // markerAppIcon4 = await BitmapDescriptor.fromAssetImage(
+      //     const ImageConfiguration(size: Size(5,5)),
+      //     'marker_images/blue.png');
+      markerAppIcon1 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+      markerAppIcon2 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
+      markerAppIcon3 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+      markerAppIcon4 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+
+    }
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
