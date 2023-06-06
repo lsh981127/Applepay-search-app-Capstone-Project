@@ -9,6 +9,8 @@ import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:newcapstone/src/home_page.dart';
 import 'package:get/get.dart';
+import 'package:newcapstone/src/login_page.dart';
+
 
 import 'community/home_cubit.dart';
 
@@ -28,12 +30,8 @@ Widget platformChoice() {
   if(kIsWeb) {
     return googleMapPage();
   } else {
-    if(Platform.isAndroid) {
-      // return mapPage();
-      return googleMapPage();
-    } else {
-      return googleMapPage();
-    }
+    return BlocProvider(
+        create: (_) => HomeCubit(), child: googleMapPage());
   }
 }
 
@@ -51,8 +49,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) {
-          return BlocProvider(
-              create: (_) => HomeCubit(), child: HomePage());
+          return platformChoice();
         }
       });
   }

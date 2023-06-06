@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:newcapstone/community/write_item.dart';
+import '../main.dart';
 import 'Post.dart';
 import '../community/color.dart';
 import 'database.dart';
@@ -10,6 +11,7 @@ import 'freeforum_detail.dart';
 
 
 class freeForum extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     Post post4 = Post.clone(dataBase.post1);
@@ -55,7 +57,8 @@ class freeForum extends StatelessWidget {
             icon: Stack(children: [
               CupertinoNavigationBarBackButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => MyApp()));
                 },
                 color: Color(0xff252532),
               ),
