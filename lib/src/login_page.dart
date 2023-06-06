@@ -18,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
   String? name, imageUrl, userEmail, uid;
-
   Future<User?> signInWithGoogleWeb() async {
     // Initialize Firebase
     await Firebase.initializeApp();
@@ -102,6 +101,11 @@ class _LoginPageState extends State<LoginPage> {
 
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -113,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
               if(!context.mounted) {
                 return ;
               }
+              
               kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
               const googleMapPage()), (Route<dynamic> route) => false);
