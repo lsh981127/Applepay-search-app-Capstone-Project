@@ -125,7 +125,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
             child: Center(
               child: Container(
                   color: Colors.white,
-                  width: 420,
+                  width: 1500,
                   child: Padding(
                     padding:
                     const EdgeInsets.only(top: 10, left: 15, right: 15),
@@ -147,7 +147,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                       borderRadius: BorderRadius.circular(5.0),
                                       image: DecorationImage(
                                           image:
-                                          AssetImage("assets/profile.jpg"),
+                                          AssetImage("profile.png"),
                                           fit: BoxFit.fill),
                                     ),
                                   ),
@@ -195,7 +195,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                           height: 15.0,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(right: 5),
+                          padding: const EdgeInsets.only(left: 15),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -279,7 +279,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                           height: 15,
                         ),
                         Container(
-                          width: 430,
+                          width: 1500,
                           height: 0.4,
                           color: Colors.grey,
                         ),
@@ -414,7 +414,7 @@ Widget commentBox(BuildContext context, String comment, int num) {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
                     image: DecorationImage(
-                        image: AssetImage("assets/profile.jpg"),
+                        image: AssetImage("profile.png"),
                         fit: BoxFit.fill),
                   ),
                 ),
@@ -525,7 +525,7 @@ Widget commentBox(BuildContext context, String comment, int num) {
           ),
           SizedBox(height: 10),
           Container(
-            width: 430,
+            width: 1500,
             height: 0.4,
             color: Colors.grey,
           ),

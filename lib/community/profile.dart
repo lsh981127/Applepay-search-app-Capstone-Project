@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../main.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -60,7 +62,8 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Stack(children: [
             CupertinoNavigationBarBackButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyApp()));
               },
               color: Color(0xff252532),
             ),

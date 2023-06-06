@@ -54,6 +54,7 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLongitude = 0;
   late GoogleMapController mapController;
   bool _myLocationEnabled = false;
+  late Uint8List markerIcon1,markerIcon2,markerIcon3,markerIcon4;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
@@ -95,6 +96,7 @@ class _googleMapPageState extends State<googleMapPage> {
     get_gsheet().then((_){
       _loadMarkers();
     });
+    setCustomMapPin();
     bringData();
   }
 
@@ -224,19 +226,59 @@ class _googleMapPageState extends State<googleMapPage> {
         final latitude = _gsheetData[i]['latitude'];
         final longitude = _gsheetData[i]['longitude'];
         final address = _gsheetData[i]['address'];
+        final category = _gsheetData[i]['category'];
         distanceInMeters = Geolocator.distanceBetween(
             currentLatitude, currentLongitude, latitude, longitude);
         if (distanceInMeters <= 500) {
-          markers.add(
-            Marker(
-              markerId: MarkerId(name),
-              position: LatLng(latitude, longitude),
-              infoWindow: InfoWindow(
-                title: name,
-                snippet: address,
+          if (category == "편의점") {
+            markers.add(
+              Marker(
+                markerId: MarkerId(name),
+                icon: BitmapDescriptor.fromBytes(markerIcon1),
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: name,
+                  snippet: address,
+                ),
               ),
-            ),
-          );
+            );
+          } else if (category=="대형마트") {
+            markers.add(
+              Marker(
+                markerId: MarkerId(name),
+                icon: BitmapDescriptor.fromBytes(markerIcon2),
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: name,
+                  snippet: address,
+                ),
+              ),
+            );
+          } else if (category == "음식점") {
+            markers.add(
+              Marker(
+                markerId: MarkerId(name),
+                icon: BitmapDescriptor.fromBytes(markerIcon3),
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: name,
+                  snippet: address,
+                ),
+              ),
+            );
+          } else {
+            markers.add(
+                Marker(
+                  markerId: MarkerId(name),
+                  icon: BitmapDescriptor.fromBytes(markerIcon4),
+                  position: LatLng(latitude, longitude),
+                  infoWindow: InfoWindow(
+                    title: name,
+                    snippet: address,
+                  ),
+                ),
+            );
+          }
         }
         setState(() {
           _markers.addAll(markers);
@@ -263,7 +305,7 @@ class _googleMapPageState extends State<googleMapPage> {
       ''';
 
     final gsheets = GSheets(credentials);
-    final spreadsheet = await gsheets.spreadsheet('1JXnZLWDw_uF5h9--1t6r2yLQappqFUGnSE1J3c5xt1I');
+    final spreadsheet = await gsheets.spreadsheet('1NfTbHtaI6g9GLmtd3GOQ7CM4wLT_mGTOoDfSsq5ZizY');
 
     final worksheet = spreadsheet.worksheetByTitle('시트1');
     final valueRange = await worksheet?.values.allRows();
@@ -275,16 +317,34 @@ class _googleMapPageState extends State<googleMapPage> {
     List<List>? rowsAsListOfValues = data;
     List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues!.sublist(1);
     _gsheetData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(x:double.parse(row[3].toString()), y:double.parse(row[4].toString()));
+      final epsg2097Coords = Point(x:double.parse(row[4].toString()), y:double.parse(row[5].toString()));
       final latLong=srcProj.transform(dstnProj, epsg2097Coords);
       return{
         'name':row[0],
         'latitude':latLong.toArray()[1],
         'longitude':latLong.toArray()[0],
-        'address':row[2]
+        'address':row[3],
+        'category':row[1]
       };
     }).toList();
 
+  }
+
+  void setCustomMapPin() async{
+    markerIcon1=await getBytesFromAsset('marker_images/green.png',5);
+    markerIcon2=await getBytesFromAsset('marker_images/purple.png',5);
+    markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
+    markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
   void _onMapCreated(GoogleMapController controller) {
