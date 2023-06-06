@@ -8,11 +8,15 @@ import 'package:newcapstone/community/freeforum.dart';
 import 'components/custom_text_form_field.dart';
 
 class WritePage extends StatelessWidget {
+  
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: Colors.grey[850],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

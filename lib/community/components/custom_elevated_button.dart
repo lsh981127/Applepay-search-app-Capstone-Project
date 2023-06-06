@@ -11,6 +11,7 @@ class CustomElevatedButton extends StatelessWidget{
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.grey,
         minimumSize: Size(double.infinity, 50),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
