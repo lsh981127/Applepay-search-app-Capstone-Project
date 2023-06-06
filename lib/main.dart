@@ -8,6 +8,7 @@ import 'package:newcapstone/firebase_options.dart';
 import 'package:newcapstone/src/googleMap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:newcapstone/src/home_page.dart';
+import 'package:get/get.dart';
 
 import 'community/home_cubit.dart';
 
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

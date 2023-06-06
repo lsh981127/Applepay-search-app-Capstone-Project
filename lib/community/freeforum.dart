@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:newcapstone/community/write_item.dart';
 import 'Post.dart';
 import '../community/color.dart';
 import 'database.dart';
@@ -81,6 +83,7 @@ class freeForum extends StatelessWidget {
                             child: const Text('글 쓰기'),
                             onPressed: () {
                               Navigator.pop(context, '글 쓰기');
+                              Get.to(WritePage());
                             },
                           ),
                           CupertinoActionSheetAction(
