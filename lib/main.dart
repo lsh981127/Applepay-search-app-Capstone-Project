@@ -28,12 +28,8 @@ Widget platformChoice() {
   if(kIsWeb) {
     return googleMapPage();
   } else {
-    if(Platform.isAndroid) {
-      // return mapPage();
-      return googleMapPage();
-    } else {
-      return googleMapPage();
-    }
+    return BlocProvider(
+        create: (_) => HomeCubit(), child: googleMapPage());
   }
 }
 
@@ -51,8 +47,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) {
-          return BlocProvider(
-              create: (_) => HomeCubit(), child: googleMapPage());
+          return platformChoice();
         }
       });
   }

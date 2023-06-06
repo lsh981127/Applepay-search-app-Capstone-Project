@@ -204,6 +204,17 @@ class _googleMapPageState extends State<googleMapPage> {
     }
   }
 
+  logoutAccount() async {
+    // 로그아웃 함수
+    await GoogleSignIn().signOut(); // 계정 선택
+    await FirebaseAuth.instance.signOut();
+
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const googleMapPage()),
+            (Route<dynamic> route) => false);
+  }
+
   void _loadMarkers() {
     List<Marker> markers = [];
     double distanceInMeters;
@@ -298,7 +309,10 @@ class _googleMapPageState extends State<googleMapPage> {
 
   Widget webDrawer() {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.grey[850],
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -306,8 +320,21 @@ class _googleMapPageState extends State<googleMapPage> {
             Column(
               children: [
                 UserAccountsDrawerHeader(
-                  accountName: Text('사용자 이름 : ${userInfoName}'),
-                  accountEmail: Text('사용자 이메일 : ${userInfoEmail}'),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[850],
+                  ),
+                  accountName: Text(
+                    '사용자 이름 : ${userInfoName}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  accountEmail: Text(
+                      '사용자 이메일 : ${userInfoEmail}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 10,),
                 ListTile(
@@ -371,49 +398,111 @@ class _googleMapPageState extends State<googleMapPage> {
                   },
                 ),
                 (FirebaseAuth.instance.currentUser == null) ?
-                ElevatedButton(
-                  onPressed: () async {
-                    if(!context.mounted) {
-                      return ;
-                    }
-                    // showAlertDialog();
-                    // await signInWithGoogle();
-                    kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                    const googleMapPage()), (Route<dynamic> route) => false);
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      elevation: 0.0,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(50)
-                        ),
-                      ),
-                      side: const BorderSide(
-                        color: Colors.white,
-                      )
-                  ),
-                  child: Container(
-                    height: 55,
-                    width: 300,
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text('구글 로그인',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              height: 1.5
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(!context.mounted) {
+                        return ;
+                      }
+                      // showAlertDialog();
+                      // await signInWithGoogle();
+                      kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                      const googleMapPage()), (Route<dynamic> route) => false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(50)
                           ),
                         ),
-                        SizedBox(width: 10,),
-                      ],
+                        side: const BorderSide(
+                          color: Colors.grey,
+                        )
+                    ),
+                    child: Container(
+                      height: 55,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children:  [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            child: const Image(
+                              image: AssetImage('google_icon.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Text("구글 로그인",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                        ],
+                      ),
                     ),
                   ),
-                ) : Container(),
+                ) : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(!context.mounted) {
+                        return ;
+                      }
+                      await logoutAccount();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(50)
+                          ),
+                        ),
+                        side: const BorderSide(
+                          color: Colors.grey,
+                        )
+                    ),
+                    child: Container(
+                      height: 55,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children:  [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            child: const Image(
+                              image: AssetImage('google_icon.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Text("로그아웃",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                        ],
+                      ),
+                    ),
+
+                  ),
+                ),
+
               ],
             ),
           ],
