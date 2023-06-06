@@ -362,12 +362,13 @@ class _googleMapPageState extends State<googleMapPage> {
   };
 
   List<Icon> icons = [
-    Icon(Icons.store),
+    Icon(Icons.store, color:Colors.black),
     Icon(Icons.local_grocery_store),
     Icon(Icons.local_cafe),
     Icon(Icons.local_mall),
     Icon(Icons.restaurant)
   ];
+
 
   Widget webDrawer() {
     return Scaffold(
@@ -669,7 +670,7 @@ class _googleMapPageState extends State<googleMapPage> {
             ),
           ),
         ),
-        Visibility(child: button),
+
         SizedBox(
           height: 50,
           child: ListView.builder(
