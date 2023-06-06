@@ -5,6 +5,7 @@ import '../community/color.dart';
 import 'database.dart';
 import 'search.dart';
 import 'freeforum_detail.dart';
+import '../src/googleMap.dart';
 
 
 class freeForum extends StatelessWidget {
@@ -53,7 +54,9 @@ class freeForum extends StatelessWidget {
             icon: Stack(children: [
               CupertinoNavigationBarBackButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => googleMapPage())
+                  );
                 },
                 color: Color(0xff252532),
               ),
@@ -213,7 +216,7 @@ Widget contextBox(BuildContext context, Post post) {
                   height: 10,
                 ),
                 Container(
-                  width: 430,
+                  width: 1500,
                   height: 0.4,
                   color: Colors.grey,
                 )
