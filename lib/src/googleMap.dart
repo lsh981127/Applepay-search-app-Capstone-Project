@@ -1,12 +1,23 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:proj4dart/proj4dart.dart';
+
+import '../community/freeforum.dart';
+import '../community/home_cubit.dart';
+import '../community/profile.dart';
 
 
 class googleMapPage extends StatefulWidget {
@@ -50,15 +61,42 @@ class _googleMapPageState extends State<googleMapPage> {
   final Set<Marker> _markers = {};
   List<Map<String,dynamic>> _gsheetData=[];
 
+
+  var userInfoName = "";
+  var userInfoUid = "";
+  var userInfoEmail = "";
+  var userInfoPhoto = "";
+
+  Future<void> bringData() async {
+    var snapshot = FirebaseFirestore.instance
+        .collection("users")
+        .doc("${FirebaseAuth.instance.currentUser?.uid}")
+        .get();
+
+    var data = await snapshot;
+
+    var name = (data.data()?["name"].toString() ?? "");
+    var uid = (data.data()?["uid"].toString() ?? "");
+    var email = (data.data()?["userEmail"].toString() ?? "");
+    var photo = (data.data()?["imageUrl"].toString() ?? "");
+
+    setState(() {
+      userInfoName = name;
+      userInfoUid = uid;
+      userInfoEmail = email;
+      userInfoPhoto = photo;
+    });
+  }
+
   
   @override
   void initState() {
     super.initState();
-    // _readCsv();
     _getCurrentLocation();
     get_gsheet().then((_){
       _loadMarkers();
     });
+    bringData();
   }
 
 
@@ -83,6 +121,103 @@ class _googleMapPageState extends State<googleMapPage> {
     _loadMarkers();
   }
 
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  String? name, imageUrl, userEmail, uid;
+
+
+
+
+  Future<User?> signInWithGoogleWeb() async {
+    // Initialize Firebase
+    await Firebase.initializeApp();
+    User? user;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    // The `GoogleAuthProvider` can only be
+    // used while running on the web
+    GoogleAuthProvider authProvider = GoogleAuthProvider();
+
+    try {
+      final UserCredential userCredential =
+      await auth.signInWithPopup(authProvider);
+      user = userCredential.user;
+    } catch (e) {
+      print(e);
+    }
+
+    if (user != null) {
+      uid = user.uid;
+      name = user.displayName;
+      userEmail = user.email;
+      imageUrl = user.photoURL;
+      //
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // prefs.setBool('auth', true);
+      // print("name: $name");
+      // print("userEmail: $userEmail");
+      // print("imageUrl: $imageUrl");
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(
+        {
+          'uid': uid,
+          'name': name,
+          'userEmail': userEmail,
+          'imageUrl': imageUrl,
+        },
+        SetOptions(merge: true),
+      );
+
+    }
+    return user;
+  }
+
+  Future<void> signInWithGoogleApp() async {    //앱용 로그인 코드
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: ["email", "profile"]).signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser
+        ?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    final UserCredential googleUserCredential = await FirebaseAuth.instance
+        .signInWithCredential(credential);
+    // print(googleUserCredential.additionalUserInfo?.profile);
+    // print(googleUserCredential.user?.email);
+
+    DocumentSnapshot loginCheckDoc = await FirebaseFirestore.instance
+        .collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+
+    if (!loginCheckDoc.exists) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(
+        {
+          'timeRegistry': FieldValue.serverTimestamp(),
+          'timeUpdate': FieldValue.serverTimestamp(),
+          'isStreaming': false,
+          'userEmail': googleUserCredential.user?.email,
+        },
+        SetOptions(merge: true),
+      );
+    }
+  }
+
+  logoutAccount() async {
+    // 로그아웃 함수
+    await GoogleSignIn().signOut(); // 계정 선택
+    await FirebaseAuth.instance.signOut();
+
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const googleMapPage()),
+            (Route<dynamic> route) => false);
+  }
   void _loadMarkers() {
     List<Marker> markers = [];
     double distanceInMeters;
@@ -186,8 +321,269 @@ class _googleMapPageState extends State<googleMapPage> {
     Icon(Icons.restaurant)
   ];
 
-  @override
-  Widget build(BuildContext context) {
+  Widget webDrawer() {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.grey[850],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Column(
+              children: [
+                UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[850],
+                  ),
+                  accountName: Text(
+                    '사용자 이름 : ${userInfoName}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  accountEmail: Text(
+                      '사용자 이메일 : ${userInfoEmail}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10,),
+                ListTile(
+                  leading: Icon(
+                    Icons.home,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Home'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.space_dashboard_outlined,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Time'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.list_bullet,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('List'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                        freeForum()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.bell,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Alert'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const googleMapPage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.location,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Campic'),
+                  onTap: (){
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                    const ProfilePage()), (Route<dynamic> route) => false);
+                  },
+                ),
+                (FirebaseAuth.instance.currentUser == null) ?
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(!context.mounted) {
+                        return ;
+                      }
+                      // showAlertDialog();
+                      // await signInWithGoogle();
+                      kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                      const googleMapPage()), (Route<dynamic> route) => false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(50)
+                          ),
+                        ),
+                        side: const BorderSide(
+                          color: Colors.grey,
+                        )
+                    ),
+                    child: Container(
+                      height: 55,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children:  [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            child: const Image(
+                              image: AssetImage('google_icon.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Text("구글 로그인",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                        ],
+                      ),
+                    ),
+                  ),
+                ) : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(!context.mounted) {
+                        return ;
+                      }
+                      await logoutAccount();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(50)
+                          ),
+                        ),
+                        side: const BorderSide(
+                          color: Colors.grey,
+                        )
+                    ),
+                    child: Container(
+                      height: 55,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children:  [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            child: const Image(
+                              image: AssetImage('google_icon.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Text("로그아웃",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                        ],
+                      ),
+                    ),
+
+                  ),
+                ),
+
+              ],
+            ),
+          ],
+        ),
+      ),
+      body: Stack(children: [
+        GoogleMap(
+          mapType: MapType.normal,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _center,
+            zoom: 16.0,
+          ),
+          markers: _markers.toSet(),
+          myLocationEnabled: _myLocationEnabled,
+          compassEnabled: true,
+          myLocationButtonEnabled: false,
+        ),
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: SizedBox(
+            child: FloatingActionButton(
+              onPressed: _getCurrentLocation,
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              elevation: 8,
+              // 그림자 크기
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // 버튼 모서리 둥글기
+              ),
+              child: Icon(Icons.my_location),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 50,
+          child: ListView.builder(
+            //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
+            scrollDirection: Axis.horizontal,
+            itemCount: filters.entries.length, //총 갯수
+            itemBuilder: (context, index) {
+              return Padding(
+                //index번째의 view, 0부터 시작
+                padding: new EdgeInsets.all(5.0),
+                child: GestureDetector(
+                  onTap: () => setState(() =>
+                  filters[filters.keys.elementAt(index)] =
+                  !filters.values.elementAt(index)),
+                  child: Chip(
+                      avatar: icons[index],
+                      padding: new EdgeInsets.all(5.0),
+                      elevation: 8,
+                      backgroundColor: filters.values.elementAt(index)
+                          ? Colors.white
+                          : Colors.grey,
+                      label: Text(filters.keys.elementAt(index))),
+                ),
+              );
+            },
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget appBottom() {
     return Scaffold(
       body: Stack(children: [
         GoogleMap(
@@ -237,8 +633,8 @@ class _googleMapPageState extends State<googleMapPage> {
                 padding: new EdgeInsets.all(5.0),
                 child: GestureDetector(
                   onTap: () => setState(() =>
-                      filters[filters.keys.elementAt(index)] =
-                          !filters.values.elementAt(index)),
+                  filters[filters.keys.elementAt(index)] =
+                  !filters.values.elementAt(index)),
                   child: Chip(
                       avatar: icons[index],
                       padding: new EdgeInsets.all(5.0),
@@ -252,7 +648,13 @@ class _googleMapPageState extends State<googleMapPage> {
             },
           ),
         ),
-      ]),
+      ],
+      ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return kIsWeb ? webDrawer() : appBottom();
   }
 }
