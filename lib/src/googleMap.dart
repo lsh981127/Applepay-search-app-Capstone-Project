@@ -42,6 +42,8 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLatitude = 0;
   double currentLongitude = 0;
   late GoogleMapController mapController;
+  //Completer<GoogleMapController> mapController = Completer();
+  late LatLng centerPoint = LatLng(0, 0);
   bool _myLocationEnabled = false;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
@@ -59,11 +61,14 @@ class _googleMapPageState extends State<googleMapPage> {
     });
   }
 
+
+
   Future<void> _getCurrentLocation() async {
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
+
     final LatLng currentLocation =
         LatLng(position.latitude, position.longitude);
     final cameraPosition = CameraPosition(
@@ -150,9 +155,20 @@ class _googleMapPageState extends State<googleMapPage> {
 
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+   void _onMapCreated(GoogleMapController controller) {
+     mapController=controller;
+   }
+
+  // Future<LatLng> getCenter() async {
+  //   final GoogleMapController controller = await controller.future;
+  //   LatLngBounds visibleRegion = await controller.getVisibleRegion();
+  //   LatLng centerLatLng = LatLng(
+  //     (visibleRegion.northeast.latitude + visibleRegion.southwest.latitude) / 2,
+  //     (visibleRegion.northeast.longitude + visibleRegion.southwest.longitude) / 2,
+  //   );
+  //   return centerLatLng;
+  // }
+
 
   Map<String, bool> filters = {
     "편의점": true,
@@ -177,6 +193,7 @@ class _googleMapPageState extends State<googleMapPage> {
         GoogleMap(
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
+          onCameraMove: (CameraPosition cameraPosition) => centerPoint = cameraPosition.target,
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 16.0,
@@ -185,6 +202,11 @@ class _googleMapPageState extends State<googleMapPage> {
           myLocationEnabled: _myLocationEnabled,
           compassEnabled: true,
           myLocationButtonEnabled: false,
+        ),
+        GestureDetector(
+          onPanUpdate: (details){
+            print(centerPoint);
+          },
         ),
         Positioned(
           bottom: 16,
