@@ -5,7 +5,6 @@ import 'package:newcapstone/community/components/custom_textarea.dart';
 import 'package:newcapstone/community/components/custom_text_form_field.dart';
 import 'package:newcapstone/community/freeforum.dart';
 
-import 'components/custom_text_form_field.dart';
 
 class WritePage extends StatelessWidget {
   
