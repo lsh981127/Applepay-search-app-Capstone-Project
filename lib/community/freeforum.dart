@@ -58,7 +58,7 @@ class freeForum extends StatelessWidget {
               CupertinoNavigationBarBackButton(
                 onPressed: () {
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => MyApp()));
+                      context, MaterialPageRoute(builder: (context) => platformChoice()));
                 },
                 color: Color(0xff252532),
               ),

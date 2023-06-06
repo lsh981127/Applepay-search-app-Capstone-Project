@@ -429,8 +429,8 @@ class _googleMapPageState extends State<googleMapPage> {
                   ),
                   title: Text('List'),
                   onTap: (){
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                        freeForum()), (Route<dynamic> route) => false);
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        freeForum()));
                   },
                 ),
                 ListTile(

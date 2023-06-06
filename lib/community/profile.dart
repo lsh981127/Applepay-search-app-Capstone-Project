@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
             CupertinoNavigationBarBackButton(
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => MyApp()));
+                    context, MaterialPageRoute(builder: (context) => platformChoice()));
               },
               color: Color(0xff252532),
             ),
