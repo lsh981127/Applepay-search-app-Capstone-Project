@@ -90,7 +90,7 @@ class _googleMapPageState extends State<googleMapPage> {
     });
   }
 
-  
+
   @override
   void initState() {
     super.initState();
@@ -107,8 +107,7 @@ class _googleMapPageState extends State<googleMapPage> {
         desiredAccuracy: LocationAccuracy.high);
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
-    final LatLng currentLocation =
-        LatLng(position.latitude, position.longitude);
+    final LatLng currentLocation = LatLng(position.latitude, position.longitude);
     final cameraPosition = CameraPosition(
       bearing: 0,
       target: currentLocation,
@@ -270,15 +269,15 @@ class _googleMapPageState extends State<googleMapPage> {
             );
           } else {
             markers.add(
-                Marker(
-                  markerId: MarkerId(name),
-                  icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon4) : markerAppIcon4,
-                  position: LatLng(latitude, longitude),
-                  infoWindow: InfoWindow(
-                    title: name,
-                    snippet: address,
-                  ),
+              Marker(
+                markerId: MarkerId(name),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon4) : markerAppIcon4,
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: name,
+                  snippet: address,
                 ),
+              ),
             );
           }
         }
@@ -399,7 +398,7 @@ class _googleMapPageState extends State<googleMapPage> {
                     ),
                   ),
                   accountEmail: Text(
-                      '사용자 이메일 : ${userInfoEmail}',
+                    '사용자 이메일 : ${userInfoEmail}',
                     style: TextStyle(
                       color: Colors.white,
                     ),
