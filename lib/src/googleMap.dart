@@ -339,23 +339,10 @@ class _googleMapPageState extends State<googleMapPage> {
       markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
       markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
     } else {
-      // markerAppIcon1 = await BitmapDescriptor.fromAssetImage(
-      //     const ImageConfiguration(size: Size(5,5)),
-      //     'marker_images/green.png');
-      // markerAppIcon2 = await BitmapDescriptor.fromAssetImage(
-      //     const ImageConfiguration(size: Size(5,5)),
-      //     'marker_images/purple.png');
-      // markerAppIcon3 = await BitmapDescriptor.fromAssetImage(
-      //     const ImageConfiguration(size: Size(5,5)),
-      //     'marker_images/red.png');
-      // markerAppIcon4 = await BitmapDescriptor.fromAssetImage(
-      //     const ImageConfiguration(size: Size(5,5)),
-      //     'marker_images/blue.png');
       markerAppIcon1 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
       markerAppIcon2 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
       markerAppIcon3 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
       markerAppIcon4 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
-
     }
   }
 
