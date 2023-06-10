@@ -53,13 +53,15 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLatitude = 0;
   double currentLongitude = 0;
   late GoogleMapController mapController;
+  late BitmapDescriptor markerAppIcon1, markerAppIcon2, markerAppIcon3, markerAppIcon4;
+
   bool _myLocationEnabled = false;
   late Uint8List markerIcon1,markerIcon2,markerIcon3,markerIcon4;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
   List<Map<String, dynamic>> _csvData = [];
-  List<Map<String,dynamic>> _gsheetData=[];
+  List<Map<String, dynamic>> _gsheetData = [];
 
 
   var userInfoName = "";
@@ -88,15 +90,15 @@ class _googleMapPageState extends State<googleMapPage> {
     });
   }
 
-  
+
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
-    get_gsheet().then((_){
+    get_gsheet().then((_) {
+      setCustomMapPin();
       _loadMarkers();
     });
-    setCustomMapPin();
     bringData();
   }
 
@@ -105,8 +107,7 @@ class _googleMapPageState extends State<googleMapPage> {
         desiredAccuracy: LocationAccuracy.high);
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
-    final LatLng currentLocation =
-        LatLng(position.latitude, position.longitude);
+    final LatLng currentLocation = LatLng(position.latitude, position.longitude);
     final cameraPosition = CameraPosition(
       bearing: 0,
       target: currentLocation,
@@ -234,7 +235,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
-                icon: BitmapDescriptor.fromBytes(markerIcon1),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon1) : markerAppIcon1,
                 position: LatLng(latitude, longitude),
                 infoWindow: InfoWindow(
                   title: name,
@@ -246,7 +247,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
-                icon: BitmapDescriptor.fromBytes(markerIcon2),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon2) : markerAppIcon2,
                 position: LatLng(latitude, longitude),
                 infoWindow: InfoWindow(
                   title: name,
@@ -258,7 +259,7 @@ class _googleMapPageState extends State<googleMapPage> {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
-                icon: BitmapDescriptor.fromBytes(markerIcon3),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon3) : markerAppIcon3,
                 position: LatLng(latitude, longitude),
                 infoWindow: InfoWindow(
                   title: name,
@@ -268,15 +269,15 @@ class _googleMapPageState extends State<googleMapPage> {
             );
           } else {
             markers.add(
-                Marker(
-                  markerId: MarkerId(name),
-                  icon: BitmapDescriptor.fromBytes(markerIcon4),
-                  position: LatLng(latitude, longitude),
-                  infoWindow: InfoWindow(
-                    title: name,
-                    snippet: address,
-                  ),
+              Marker(
+                markerId: MarkerId(name),
+                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon4) : markerAppIcon4,
+                position: LatLng(latitude, longitude),
+                infoWindow: InfoWindow(
+                  title: name,
+                  snippet: address,
                 ),
+              ),
             );
           }
         }
@@ -309,10 +310,11 @@ class _googleMapPageState extends State<googleMapPage> {
 
     final worksheet = spreadsheet.worksheetByTitle('시트1');
     final valueRange = await worksheet?.values.allRows();
-    final data=valueRange?.map((row) => List<dynamic>.from(row)).toList();
+    final data = valueRange?.map((row) => List<dynamic>.from(row)).toList();
 
-    var srcProj=Projection.add('EPSG:2097','+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
-    var dstnProj=Projection.get('EPSG:4326')!;
+    var srcProj = Projection.add('EPSG:2097',
+        '+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs +towgs84=-115.80,474.99,674.11,1.16,-2.31,-1.63,6.43');
+    var dstnProj = Projection.get('EPSG:4326')!;
 
     List<List>? rowsAsListOfValues = data;
     List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues!.sublist(1);
@@ -327,14 +329,20 @@ class _googleMapPageState extends State<googleMapPage> {
         'category':row[1]
       };
     }).toList();
-
   }
 
   void setCustomMapPin() async{
-    markerIcon1=await getBytesFromAsset('marker_images/green.png',5);
-    markerIcon2=await getBytesFromAsset('marker_images/purple.png',5);
-    markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
-    markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
+    if(kIsWeb) {
+      markerIcon1=await getBytesFromAsset('marker_images/green.png',5);
+      markerIcon2=await getBytesFromAsset('marker_images/purple.png',5);
+      markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
+      markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
+    } else {
+      markerAppIcon1 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+      markerAppIcon2 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
+      markerAppIcon3 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+      markerAppIcon4 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+    }
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -390,7 +398,7 @@ class _googleMapPageState extends State<googleMapPage> {
                     ),
                   ),
                   accountEmail: Text(
-                      '사용자 이메일 : ${userInfoEmail}',
+                    '사용자 이메일 : ${userInfoEmail}',
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -429,8 +437,8 @@ class _googleMapPageState extends State<googleMapPage> {
                   ),
                   title: Text('List'),
                   onTap: (){
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                        freeForum()), (Route<dynamic> route) => false);
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                        freeForum()));
                   },
                 ),
                 ListTile(
@@ -662,7 +670,7 @@ class _googleMapPageState extends State<googleMapPage> {
           ),
         ),
         SizedBox(
-          height: 50,
+          height: 100,
           child: ListView.builder(
             //padding: new EdgeInsets.all(10.0), //묶인 카테고리 주변에 다 10만큼
             scrollDirection: Axis.horizontal,
