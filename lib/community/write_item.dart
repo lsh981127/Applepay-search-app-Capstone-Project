@@ -14,7 +14,7 @@ class WritePage extends StatefulWidget{
 
 class _WritePageState extends State<WritePage>{
   final _formKey = GlobalKey<FormState>();
-  final firestore=FirebaseFirestore.instance;
+  var userName="";
 
   final _titleTextEditController=TextEditingController();
   final _contentTextEditController=TextEditingController();
@@ -29,8 +29,22 @@ class _WritePageState extends State<WritePage>{
   @override
   void initState(){
     super.initState();
+    getUsername();
   }
 
+  Future<void> getUsername() async {
+    final userCollectionReference = FirebaseFirestore.instance
+        .collection("users")
+        .doc('${FirebaseAuth.instance.currentUser?.uid}')
+        .get();
+
+    final data = await userCollectionReference;
+    final name = (data.data()?["name"].toString() ?? "");
+
+    setState(() {
+      userName=name;
+    });
+  }
 
   @override
   Widget build(BuildContext context){
@@ -57,15 +71,20 @@ class _WritePageState extends State<WritePage>{
                   getData:(){
                     final String title=_titleTextEditController.text;
                     final content=_contentTextEditController.text;
-                    // user 정보 가져오기
-                    // final user=
+                    final user=userName;
+
+                    DateTime dt = DateTime.now();
+                    final date='${dt.month}/${dt.day}';
+                    final time='${dt.hour}:${dt.minute}';
+
                     final userCollectionReference=
                       FirebaseFirestore.instance.collection("users").doc('${FirebaseAuth.instance.currentUser?.uid}').collection('myposts').doc(title);
                     userCollectionReference.set({
-                      "title":title,
-                      "content":content,
-                      // "user": ,
-                      //날짜+시간: ,
+                      "title":_titleTextEditController.text,
+                      "content":_contentTextEditController.text,
+                      "writer": user,
+                      "date":date,
+                      "time":time,
                       //공감수: ,
                       //댓글수: ,
                     });
@@ -74,8 +93,9 @@ class _WritePageState extends State<WritePage>{
                     postCollectionReference.set({
                       "title":title,
                       "content":content,
-                      // "user": ,
-                      //날짜+시간: ,
+                      "writer": user,
+                      "date":date,
+                      "time":time,
                       //공감수: ,
                       //댓글수: ,
                     });

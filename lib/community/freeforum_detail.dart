@@ -21,8 +21,11 @@ class _freeForumDetailState extends State<freeForumDetail> {
 
   var postTitle = "";
   var postContent= "";
+  var postDate="";
+  var postTime="";
   var userName="";
-  var comment="";
+  var commentor="";
+  // var comment="";
 
   Future<void> getContent() async {
     final postCollectionReference = FirebaseFirestore.instance
@@ -34,10 +37,16 @@ class _freeForumDetailState extends State<freeForumDetail> {
 
     final title = (data.data()?["title"].toString() ?? "");
     final content = (data.data()?["content"].toString() ?? "");
+    final date = (data.data()?["date"].toString() ?? "");
+    final time = (data.data()?["time"].toString() ?? "");
+    final name = (data.data()?["writer"].toString() ?? "");
 
     setState(() {
       postTitle = title;
       postContent = content;
+      postDate=date;
+      postTime=time;
+      userName=name;
     });
   }
 
@@ -51,7 +60,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
     final name = (data.data()?["name"].toString() ?? "");
 
     setState(() {
-      userName=name;
+      commentor=name;
     });
   }
 
@@ -213,7 +222,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                     crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                     children: [
-                                      Text(widget.post.writer,
+                                      Text(userName,
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 20.0,
@@ -222,7 +231,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                       SizedBox(height: 4),
                                       Row(
                                         children: [
-                                          Text(widget.post.time + " 02:02",
+                                          Text(postDate + " "+ postTime,
                                               style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13.0,
@@ -398,7 +407,6 @@ class _freeForumDetailState extends State<freeForumDetail> {
                         color: Palette.everyRed),
                     onPressed: () {
                       final String comment=_controllerB.text;
-                      final String commentor=userName;
                       final commentCollectionReference= FirebaseFirestore.instance.collection('posts').doc(postTitle).collection('comments').doc(comment);
                       commentCollectionReference.set({
                         "commentor":commentor,
