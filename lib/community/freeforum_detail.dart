@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'Post.dart';
@@ -17,10 +19,32 @@ class _freeForumDetailState extends State<freeForumDetail> {
   bool anonymous = true;
   bool bell = false;
 
+  var postTitle = "";
+  var postContent= "";
+
+  Future<void> bringData() async {
+    final postCollectionReference = FirebaseFirestore.instance
+        .collection("posts")
+        .doc(widget.post.title)
+        .get();
+
+    final data = await postCollectionReference;
+
+    final title = (data.data()?["title"].toString() ?? "");
+    final content = (data.data()?["content"].toString() ?? "");
+
+    setState(() {
+      postTitle = title;
+      postContent = content;
+    });
+  }
+
+
   @override
   void initState() {
     _controllerB = TextEditingController();
     super.initState();
+    bringData();
   }
 
   @override
@@ -180,7 +204,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                           height: 15,
                         ),
                         Text(
-                          widget.post.title,
+                          postTitle,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 21.0),
                         ),
@@ -188,7 +212,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                           height: 10.0,
                         ),
                         Text(
-                          widget.post.contents,
+                          postContent,
                           style: TextStyle(fontSize: 16.0, color: Colors.black),
                         ),
                         SizedBox(
