@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:newcapstone/community/write_item.dart';
 import '../main.dart';
 import 'Post.dart';
 import '../community/color.dart';
@@ -55,9 +57,8 @@ class freeForum extends StatelessWidget {
             icon: Stack(children: [
               CupertinoNavigationBarBackButton(
                 onPressed: () {
-                  // Navigator.pop(context);
                   Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => MyApp()));
+                      context, MaterialPageRoute(builder: (context) => platformChoice()));
                 },
                 color: Color(0xff252532),
               ),
@@ -85,6 +86,7 @@ class freeForum extends StatelessWidget {
                             child: const Text('글 쓰기'),
                             onPressed: () {
                               Navigator.pop(context, '글 쓰기');
+                              Get.to(WritePage());
                             },
                           ),
                           CupertinoActionSheetAction(
