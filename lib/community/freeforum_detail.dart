@@ -15,14 +15,16 @@ class freeForumDetail extends StatefulWidget {
 }
 
 class _freeForumDetailState extends State<freeForumDetail> {
-  late TextEditingController _controllerB;
+  final _controllerB = TextEditingController();
   bool anonymous = true;
   bool bell = false;
 
   var postTitle = "";
   var postContent= "";
+  var userName="";
+  var comment="";
 
-  Future<void> bringData() async {
+  Future<void> getContent() async {
     final postCollectionReference = FirebaseFirestore.instance
         .collection("posts")
         .doc(widget.post.title)
@@ -39,12 +41,42 @@ class _freeForumDetailState extends State<freeForumDetail> {
     });
   }
 
+  Future<void> getUsername() async {
+    final userCollectionReference = FirebaseFirestore.instance
+        .collection("users")
+        .doc('${FirebaseAuth.instance.currentUser?.uid}')
+        .get();
+
+    final data = await userCollectionReference;
+    final name = (data.data()?["name"].toString() ?? "");
+
+    setState(() {
+      userName=name;
+    });
+  }
+
+  // Future<void> getComments() async {
+  //   final userCollectionReference = FirebaseFirestore.instance
+  //       .collection("posts")
+  //       .doc(postTitle)
+  //       .get();
+  //
+  //   final data = await userCollectionReference;
+  //   final name = (data.data()?["name"].toString() ?? "");
+  //
+  //   setState(() {
+  //     userName=name;
+  //   });
+  // }
+
+
 
   @override
   void initState() {
-    _controllerB = TextEditingController();
     super.initState();
-    bringData();
+    getContent();
+    getUsername();
+    // getComments();
   }
 
   @override
@@ -364,19 +396,30 @@ class _freeForumDetailState extends State<freeForumDetail> {
                   suffixIcon: IconButton(
                     icon: Icon(CupertinoIcons.paperplane,
                         color: Palette.everyRed),
-                    onPressed: () {},
+                    onPressed: () {
+                      final String comment=_controllerB.text;
+                      final String commentor=userName;
+                      final commentCollectionReference= FirebaseFirestore.instance.collection('posts').doc(postTitle).collection('comments').doc(comment);
+                      commentCollectionReference.set({
+                        "commentor":commentor,
+                        "content":comment,
+                      });
+                    },
                     iconSize: 24.0,
                   ),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(20)),
                       borderSide:
-                      BorderSide(color: Colors.grey.shade200, width: 2)),
+                      BorderSide(color: Colors.grey.shade200, width: 2)
+                  ),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(20)),
                       borderSide:
-                      BorderSide(color: Colors.grey.shade200, width: 2)),
+                      BorderSide(color: Colors.grey.shade200, width: 2)
+                  ),
                   contentPadding: EdgeInsets.fromLTRB(30, 10, 10, 0),
-                  hintText: "댓글을 입력하세요."),
+                  hintText: "댓글을 입력하세요."
+              ),
               onSubmitted: (String value) async {
                 await showDialog<void>(
                   context: context,
