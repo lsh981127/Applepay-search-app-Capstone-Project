@@ -57,12 +57,12 @@ class _googleMapPageState extends State<googleMapPage> {
   late BitmapDescriptor markerAppIcon1, markerAppIcon2, markerAppIcon3, markerAppIcon4;
 
   bool _myLocationEnabled = false;
+  bool _visible = false;
+  double distanceMoving=0;
   late Uint8List markerIcon1,markerIcon2,markerIcon3,markerIcon4;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
-
-  List<Map<String, dynamic>> _csvData = [];
   List<Map<String, dynamic>> _gsheetData = [];
 
   var userInfoName = "";
@@ -103,8 +103,6 @@ class _googleMapPageState extends State<googleMapPage> {
     bringData();
   }
 
-
-
   Future<void> _getCurrentLocation() async {
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -121,15 +119,13 @@ class _googleMapPageState extends State<googleMapPage> {
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     setState(() {
       _myLocationEnabled = true;
+      _visible=false;
     });
     _loadMarkers();
   }
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
   String? name, imageUrl, userEmail, uid;
-
-
-
 
   Future<User?> signInWithGoogleWeb() async {
     // Initialize Firebase
@@ -235,7 +231,7 @@ class _googleMapPageState extends State<googleMapPage> {
         distanceInMeters = Geolocator.distanceBetween(
             currentLatitude, currentLongitude, latitude, longitude);
         if (distanceInMeters <= 500) {
-          if (category == "편의점") {
+          if (category == "편의점" && store) {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
@@ -247,7 +243,7 @@ class _googleMapPageState extends State<googleMapPage> {
                 ),
               ),
             );
-          } else if (category=="대형마트") {
+          } else if (category=="대형마트"&& grocery) {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
@@ -259,7 +255,7 @@ class _googleMapPageState extends State<googleMapPage> {
                 ),
               ),
             );
-          } else if (category == "음식점") {
+          } else if (category == "음식점"&& restaurant) {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
@@ -271,7 +267,7 @@ class _googleMapPageState extends State<googleMapPage> {
                 ),
               ),
             );
-          } else {
+          } else if (cafe) {
             markers.add(
               Marker(
                 markerId: MarkerId(name),
@@ -363,6 +359,11 @@ class _googleMapPageState extends State<googleMapPage> {
         .asUint8List();
   }
 
+  bool store=true;
+  bool grocery=true;
+  bool cafe=true;
+  bool restaurant=true;
+
   Map<String, bool> filters = {
     "편의점": true,
     "대형마트": true,
@@ -372,13 +373,12 @@ class _googleMapPageState extends State<googleMapPage> {
   };
 
   List<Icon> icons = [
-    Icon(Icons.store, color:Colors.black),
-    Icon(Icons.local_grocery_store),
-    Icon(Icons.local_cafe),
-    Icon(Icons.local_mall),
-    Icon(Icons.restaurant)
+    Icon(Icons.store, color:Colors.green),
+    Icon(Icons.local_grocery_store, color:Colors.black),
+    Icon(Icons.local_cafe, color:Colors.indigo),
+    Icon(Icons.local_mall, color:Colors.black),
+    Icon(Icons.restaurant, color:Colors.black)
   ];
-
 
   Widget webDrawer() {
     return Scaffold(
@@ -585,6 +585,7 @@ class _googleMapPageState extends State<googleMapPage> {
         GoogleMap(
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
+          onCameraMove: (CameraPosition cameraPosition) => centerPoint = cameraPosition.target,
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 16.0,
@@ -593,6 +594,41 @@ class _googleMapPageState extends State<googleMapPage> {
           myLocationEnabled: _myLocationEnabled,
           compassEnabled: true,
           myLocationButtonEnabled: false,
+        ),
+        GestureDetector(
+          onPanUpdate: (details){
+            print(centerPoint);
+            distanceMoving = Geolocator.distanceBetween(
+                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
+            print(distanceMoving);
+            if (distanceMoving >= 450) {setState(() {
+              _visible=true;
+            });}
+          },
+        ),
+        Container(
+          alignment: Alignment.bottomCenter,
+          margin: EdgeInsets.only(bottom: 16),
+          child:
+          Visibility(
+            visible: _visible,
+            child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(	//모서리를 둥글게
+                      borderRadius: BorderRadius.circular(50)),
+                  side:BorderSide(width:0.5, color:Colors.black)),
+                onPressed: (){
+                  currentLatitude=centerPoint.latitude;
+                  currentLongitude=centerPoint.longitude;
+                  _loadMarkers();
+                  },
+                icon: Icon(Icons.refresh, color:Colors.black),
+                label:Text('현재위치에서 재검색', style: TextStyle(color:Colors.black))
+            ),
+          )
         ),
         Positioned(
           bottom: 16,
@@ -622,12 +658,20 @@ class _googleMapPageState extends State<googleMapPage> {
                 //index번째의 view, 0부터 시작
                 padding: new EdgeInsets.all(5.0),
                 child: GestureDetector(
-                  onTap: () => setState(() =>
-                  filters[filters.keys.elementAt(index)] =
-                  !filters.values.elementAt(index)),
+                  onTap: () {setState(() {
+                    filters[filters.keys.elementAt(index)] =
+                    !filters.values.elementAt(index);
+                    if(index==0) store = !store;
+                    if(index ==1) grocery = !grocery;
+                    if(index ==2) cafe = !cafe;
+                    if(index==3) restaurant = !restaurant;
+                    _loadMarkers();
+                  });
+                    },
                   child: Chip(
                       avatar: icons[index],
                       padding: new EdgeInsets.all(5.0),
+                      side:BorderSide(width:0.5, color:Colors.black),
                       elevation: 8,
                       backgroundColor: filters.values.elementAt(index)
                           ? Colors.white
@@ -661,8 +705,17 @@ class _googleMapPageState extends State<googleMapPage> {
         GestureDetector(
           onPanUpdate: (details){
             print(centerPoint);
-          },
+            distanceMoving = Geolocator.distanceBetween(
+                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
+            if (distanceMoving >= 500) {setState(() {
+              _visible=true;
+            });}
+            },
         ),
+        SizedBox(height: 200,child:Visibility(
+          visible: true,
+          child: ElevatedButton(
+              onPressed: (){},child:Text('Refresh'))),),
         Positioned(
           bottom: 16,
           left: 16,
@@ -707,7 +760,7 @@ class _googleMapPageState extends State<googleMapPage> {
               );
             },
           ),
-        ),
+        )
       ],
       ),
     );
