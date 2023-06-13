@@ -6,6 +6,7 @@ import 'package:newcapstone/community/components/custom_text_form_field.dart';
 import 'package:newcapstone/community/freeforum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class WritePage extends StatefulWidget{
   @override
@@ -74,8 +75,9 @@ class _WritePageState extends State<WritePage>{
                     final user=userName;
 
                     DateTime dt = DateTime.now();
-                    final date='${dt.month}/${dt.day}';
-                    final time='${dt.hour}:${dt.minute}';
+                    final date=DateFormat('MM/dd').format(dt);
+                    final time=DateFormat('HH:mm').format(dt);
+
 
                     final userCollectionReference=
                       FirebaseFirestore.instance.collection("users").doc('${FirebaseAuth.instance.currentUser?.uid}').collection('myposts').doc(title);

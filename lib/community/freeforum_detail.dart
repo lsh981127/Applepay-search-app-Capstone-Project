@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'Comment.dart';
 import 'Post.dart';
 import 'color.dart';
+import 'package:intl/intl.dart';
 
 class freeForumDetail extends StatefulWidget {
   BuildContext context;
@@ -424,8 +425,8 @@ class _freeForumDetailState extends State<freeForumDetail> {
                       postComment++;
                       final String comment=_controllerB.text;
                       DateTime dt = DateTime.now();
-                      final date='${dt.month}/${dt.day}';
-                      final time='${dt.hour}:${dt.minute}';
+                      final date=DateFormat('MM/dd').format(dt);
+                      final time=DateFormat('HH:mm').format(dt);
 
                       final commentCollectionReference= FirebaseFirestore.instance.collection('posts').doc(postTitle).collection('comments').doc(comment);
                       commentCollectionReference.set({
