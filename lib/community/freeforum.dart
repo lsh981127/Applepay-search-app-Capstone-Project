@@ -20,14 +20,6 @@ class freeForum extends StatefulWidget{
 }
 
 class _freeForumState extends State<freeForum> {
-
-  // var postTitle = "";
-  // var postContent= "";
-  // var postWriter="";
-  // var postDate="";
-  // var postTime="";
-  // // 좋아요수
-  // // 댓글수
   List<Post> postSet = [
     dataBase.post1,
     dataBase.post2,
@@ -44,6 +36,7 @@ class _freeForumState extends State<freeForum> {
 
   Future<void> bringData() async {
     late String _title, _content, _writer, _date, _time;
+    late int _like,_comment;
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('posts').get();
     for (var doc in querySnapshot.docs) {
       _title = doc["title"];
@@ -51,7 +44,9 @@ class _freeForumState extends State<freeForum> {
       _writer = doc["writer"];
       _date = doc["date"];
       _time = doc["time"];
-      postSet.add(Post(_title, _content, _writer, _date, _time));
+      _like = doc["like"];
+      _comment = doc["comment"];
+      postSet.add(Post(_title, _content, _writer, _date, _time,_like,_comment));
     }
   }
 
@@ -155,113 +150,113 @@ class _freeForumState extends State<freeForum> {
 }
 
   Widget contextBox(BuildContext context, Post post) {
-    // int like = post.like;
-    // int comment = post.comment.length;
     return GestureDetector(
       onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => freeForumDetail(context, post)));
+                builder: (context) => freeForumDetail(context, post)
+            )
+        );
       },
       child: Expanded(
-        child: Container(
-            color: Colors.white,
-            width: 420,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post.title,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, fontSize: 18.0),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Container(
-                    width: 380,
-                    child: Text(
-                      post.contents,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 15.0, color: Colors.blueGrey),
+          child: Container(
+              color: Colors.white,
+              width: 420,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post.title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, fontSize: 18.0),
                     ),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              post.date,
-                              style: TextStyle(
-                                  fontSize: 13.0, color: Colors.blueGrey),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Text(
-                              post.writer,
-                              style: TextStyle(
-                                  fontSize: 13.0, color: Colors.blueGrey),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              CupertinoIcons.hand_thumbsup,
-                              color: Palette.everyRed,
-                              size: 14,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "like",
-                              style: TextStyle(
-                                  color: Palette.everyRed, fontSize: 14.0),
-                            ),
-                            SizedBox(
-                              width: 7,
-                            ),
-                            Icon(
-                              CupertinoIcons.chat_bubble,
-                              color: Colors.blueAccent,
-                              size: 14,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "comment",
-                              style: TextStyle(
-                                  color: Colors.blueAccent, fontSize: 14.0),
-                            ),
-                          ],
-                        ),
-                      ],
+                    SizedBox(
+                      height: 5.0,
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    width: 430,
-                    height: 0.4,
-                    color: Colors.grey,
-                  )
-                ],
-              ),
-            )),
-      ),
-    );
+                    Container(
+                      width: 380,
+                      child: Text(
+                        post.contents,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 15.0, color: Colors.blueGrey),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                post.date,
+                                style: TextStyle(
+                                    fontSize: 13.0, color: Colors.blueGrey),
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              Text(
+                                post.writer,
+                                style: TextStyle(
+                                    fontSize: 13.0, color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                CupertinoIcons.hand_thumbsup,
+                                color: Palette.everyRed,
+                                size: 14,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "${post.like}",
+                                style: TextStyle(
+                                    color: Palette.everyRed, fontSize: 14.0),
+                              ),
+                              SizedBox(
+                                width: 7,
+                              ),
+                              Icon(
+                                CupertinoIcons.chat_bubble,
+                                color: Colors.blueAccent,
+                                size: 14,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "${post.comment}",
+                                style: TextStyle(
+                                    color: Colors.blueAccent, fontSize: 14.0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 1500,
+                      height: 0.4,
+                      color: Colors.grey,
+                    )
+                  ],
+                ),
+              )),
+        ),
+      );
   }

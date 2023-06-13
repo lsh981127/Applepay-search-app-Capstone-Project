@@ -85,8 +85,8 @@ class _WritePageState extends State<WritePage>{
                       "writer": user,
                       "date":date,
                       "time":time,
-                      //공감수: ,
-                      //댓글수: ,
+                      "like":0,
+                      "comment":0,
                     });
                     final postCollectionReference=
                     FirebaseFirestore.instance.collection("posts").doc(title);
@@ -96,8 +96,8 @@ class _WritePageState extends State<WritePage>{
                       "writer": user,
                       "date":date,
                       "time":time,
-                      //공감수: ,
-                      //댓글수: ,
+                      "like":0,
+                      "comment":0,
                     });
                   },
                   funPageRoute: () {

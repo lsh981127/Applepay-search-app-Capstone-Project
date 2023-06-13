@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'Comment.dart';
 import 'Post.dart';
 import 'color.dart';
 
@@ -23,11 +24,18 @@ class _freeForumDetailState extends State<freeForumDetail> {
   var postContent= "";
   var postDate="";
   var postTime="";
-  var userName="";
-  var commentor="";
-  // var comment="";
+  var postWriter="";
+  var postLike=0;
+  var postComment=0;
 
-  Future<void> getContent() async {
+  var userName="";
+
+  // var commentWriter="";
+  // var commentContent="";
+  List<Comment> commentSet = [];
+  // var commentNum=0; //postComment랑 똑같은 값이라 없애도 되지 않을까
+
+  Future<void> getPost() async {
     final postCollectionReference = FirebaseFirestore.instance
         .collection("posts")
         .doc(widget.post.title)
@@ -40,13 +48,17 @@ class _freeForumDetailState extends State<freeForumDetail> {
     final date = (data.data()?["date"].toString() ?? "");
     final time = (data.data()?["time"].toString() ?? "");
     final name = (data.data()?["writer"].toString() ?? "");
+    final like = (data.data()?["like"] ?? 0);
+    final comment = (data.data()?["comment"] ?? 0);
 
     setState(() {
       postTitle = title;
       postContent = content;
-      postDate=date;
-      postTime=time;
-      userName=name;
+      postDate = date;
+      postTime = time;
+      postWriter = name;
+      postLike = like;
+      postComment= comment;
     });
   }
 
@@ -60,33 +72,30 @@ class _freeForumDetailState extends State<freeForumDetail> {
     final name = (data.data()?["name"].toString() ?? "");
 
     setState(() {
-      commentor=name;
+      userName=name;
     });
   }
 
-  // Future<void> getComments() async {
-  //   final userCollectionReference = FirebaseFirestore.instance
-  //       .collection("posts")
-  //       .doc(postTitle)
-  //       .get();
-  //
-  //   final data = await userCollectionReference;
-  //   final name = (data.data()?["name"].toString() ?? "");
-  //
-  //   setState(() {
-  //     userName=name;
-  //   });
-  // }
-
-
-
-  @override
-  void initState() {
-    super.initState();
-    getContent();
-    getUsername();
-    // getComments();
+  Future<void> getComment() async {
+    late String _content, _writer, _date, _time;
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('posts').doc(postTitle).collection('comments').get();
+    // final commentCount=querySnapshot.docs.length;
+    for (var doc in querySnapshot.docs) {
+      _writer = doc['commentor'];
+      _content =doc['content'];
+      _date=doc['date'];
+      _time=doc['time'];
+      print(_writer);
+      print(_content);
+      print(_date);
+      print(_time);
+      commentSet.add(Comment(_content, _writer, _date, _time));
+    }
+    // setState(() {
+    //   commentNum = commentCount;
+    // });
   }
+
 
   @override
   void dispose() {
@@ -94,10 +103,19 @@ class _freeForumDetailState extends State<freeForumDetail> {
     super.dispose();
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+    getPost();
+    getUsername();
+    getComment();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final int like = widget.post.like;
-    final int comment = widget.post.comment.length;
+    int likeNum = postLike;
+    int commentNum = postComment;
     double keyboard = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
         backgroundColor: Colors.white,
@@ -222,7 +240,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                     crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                     children: [
-                                      Text(userName,
+                                      Text(postWriter,
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 20.0,
@@ -275,7 +293,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "$like",
+                                    "${likeNum}",
                                     style: TextStyle(
                                         color: Palette.everyRed,
                                         fontSize: 14.0),
@@ -292,26 +310,9 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                     width: 5,
                                   ),
                                   Text(
-                                    "$comment",
+                                    "${commentNum}",
                                     style: TextStyle(
                                         color: Colors.blueAccent,
-                                        fontSize: 14.0),
-                                  ),
-                                  SizedBox(
-                                    width: 7,
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.star,
-                                    color: Colors.orangeAccent,
-                                    size: 14,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "$comment",
-                                    style: TextStyle(
-                                        color: Colors.orangeAccent,
                                         fontSize: 14.0),
                                   ),
                                 ],
@@ -327,7 +328,9 @@ class _freeForumDetailState extends State<freeForumDetail> {
                                   CupertinoIcons.hand_thumbsup, "공감"),
                               onTap: () {
                                 setState(() {
-                                  widget.post.like++;
+                                  postLike++;
+                                  final postCollectionReference= FirebaseFirestore.instance.collection("posts").doc(postTitle);
+                                  postCollectionReference.update({"like":postLike});
                                 });
                               },
                             ),
@@ -347,12 +350,24 @@ class _freeForumDetailState extends State<freeForumDetail> {
                           width: 1500,
                           height: 0.4,
                           color: Colors.grey,
+                          // child: FutureBuilder<void>(
+                          //   future: getComment(),
+                          //   builder: (context, snapshot) {
+                          //     return ListView.builder(
+                          //       itemCount: commentSet.length,
+                          //       itemBuilder: (BuildContext context, int index) {
+                          //         commentBox(context, 0, commentSet[index]);
+                          //       },
+                          //     );
+                          //   },
+                          // ),
                         ),
-                        for (int i = 0; i < widget.post.comment.length; i++)
-                          commentBox(context, widget.post.comment[i], i),
+                        for (int i = 0; i < commentSet.length; i++)
+                          commentBox(context, commentSet[i], i),
                       ],
                     ),
-                  )),
+                  )
+              ),
             ),
           ),
         ),
@@ -406,12 +421,23 @@ class _freeForumDetailState extends State<freeForumDetail> {
                     icon: Icon(CupertinoIcons.paperplane,
                         color: Palette.everyRed),
                     onPressed: () {
+                      postComment++;
                       final String comment=_controllerB.text;
+                      DateTime dt = DateTime.now();
+                      final date='${dt.month}/${dt.day}';
+                      final time='${dt.hour}:${dt.minute}';
+
                       final commentCollectionReference= FirebaseFirestore.instance.collection('posts').doc(postTitle).collection('comments').doc(comment);
                       commentCollectionReference.set({
-                        "commentor":commentor,
+                        "commentor":userName,
                         "content":comment,
+                        "date":date,
+                        "time":time,
                       });
+
+                      final postCollectionReference=FirebaseFirestore.instance.collection("posts").doc(postTitle);
+                      postCollectionReference.update({"comment":postComment});
+
                     },
                     iconSize: 24.0,
                   ),
@@ -470,7 +496,7 @@ Widget likeWidget(IconData icon, String title) {
       ));
 }
 
-Widget commentBox(BuildContext context, String comment, int num) {
+Widget commentBox(BuildContext context, Comment comment,int num) {
   int number = num + 1;
   return Padding(
     padding: const EdgeInsets.only(left: 6, top: 10),
@@ -495,7 +521,7 @@ Widget commentBox(BuildContext context, String comment, int num) {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  '익명$number',
+                  comment.writer,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16.0,
@@ -587,12 +613,12 @@ Widget commentBox(BuildContext context, String comment, int num) {
             ],
           ),
           Text(
-            comment,
+            comment.contents,
             style: TextStyle(fontSize: 16.0, color: Colors.black),
           ),
           SizedBox(height: 4),
           Text(
-            "11/17 02:30",
+            comment.date+" "+comment.time,
             style: TextStyle(
               fontSize: 14.0,
               color: Colors.grey,
