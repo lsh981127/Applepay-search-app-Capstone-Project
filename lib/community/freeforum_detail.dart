@@ -100,7 +100,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
         .get();
 
     final data = await userCollectionReference;
-    final name = (data.data()?["name"].toString() ?? "");
+    final name = (data.data()?["nickname"].toString() ?? "");
 
     setState(() {
       userName = name;
