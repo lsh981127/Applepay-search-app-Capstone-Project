@@ -1,19 +1,13 @@
-class Post {
-  String title;
+class Comment {
   String contents;
   String writer;
   String date;
   String time;
-  int like;
-  int comment;
 
-  Post(
-      this.title,
+  Comment(
       this.contents,
       this.writer,
       this.date,
       this.time,
-      this.like,
-      this.comment,
-  );
+      );
 }
