@@ -4,8 +4,9 @@ class CustomElevatedButton extends StatelessWidget{
 
   final String text;
   final funPageRoute;
+  final getData;
 
-  const CustomElevatedButton({required this.text, required this.funPageRoute});
+  const CustomElevatedButton({required this.text, required this.funPageRoute, required this.getData});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,10 @@ class CustomElevatedButton extends StatelessWidget{
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      onPressed: funPageRoute,
+      onPressed: () {
+          funPageRoute();
+          getData();
+        },
       child: Text("$text"),
     );
   }

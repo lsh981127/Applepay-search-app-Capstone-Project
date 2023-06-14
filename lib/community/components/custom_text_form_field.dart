@@ -3,18 +3,17 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatelessWidget {
 
   final String hint;
-  final funValidator;
-
-  const CustomTextFormField({required this.hint, required this.funValidator});
+  final controller;
+  const CustomTextFormField({required this.hint, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: TextFormField(
-        validator: funValidator,
+        controller: controller,
         decoration: InputDecoration(
-          hintText:"$hint",
+          hintText:hint,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
           ),
