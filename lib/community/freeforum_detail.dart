@@ -360,8 +360,7 @@ class _freeForumDetailState extends State<freeForumDetail> {
               ),
             ),
               ),
-              SizedBox(
-                height:1000,
+              Expanded(
                 child:FutureBuilder<void>(
                 future: getComment(),
                 builder: (context, snapshot) {
