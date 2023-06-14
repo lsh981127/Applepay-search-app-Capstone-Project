@@ -20,11 +20,7 @@ class freeForum extends StatefulWidget{
 }
 
 class _freeForumState extends State<freeForum> {
-  List<Post> postSet = [
-    dataBase.post1,
-    dataBase.post2,
-    dataBase.post3,
-  ];
+  List<Post> postSet = [];
 
 
   @override
@@ -46,6 +42,7 @@ class _freeForumState extends State<freeForum> {
       _time = doc["time"];
       _like = doc["like"];
       _comment = doc["comment"];
+      print(_content);
       postSet.add(Post(_title, _content, _writer, _date, _time,_like,_comment));
     }
   }
@@ -87,14 +84,6 @@ class _freeForumState extends State<freeForum> {
           ]),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Search()));
-            },
-            icon: Icon(CupertinoIcons.search, size: 23),
-            color: Colors.black,
-          ),
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
@@ -112,12 +101,7 @@ class _freeForumState extends State<freeForum> {
                                 Get.to(WritePage());
                               },
                             ),
-                            CupertinoActionSheetAction(
-                              child: const Text('즐겨찾기에서 삭제'),
-                              onPressed: () {
-                                Navigator.pop(context, '즐겨찾기에서 삭제');
-                              },
-                            ),
+
                           ],
                           cancelButton: CupertinoActionSheetAction(
                             child: const Text('취소'),
