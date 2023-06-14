@@ -40,7 +40,7 @@ class _WritePageState extends State<WritePage>{
         .get();
 
     final data = await userCollectionReference;
-    final name = (data.data()?["name"].toString() ?? "");
+    final name = (data.data()?["nickname"].toString() ?? "");
 
     setState(() {
       userName=name;
@@ -79,17 +79,17 @@ class _WritePageState extends State<WritePage>{
                     final time=DateFormat('HH:mm').format(dt);
 
 
-                    final userCollectionReference=
-                      FirebaseFirestore.instance.collection("users").doc('${FirebaseAuth.instance.currentUser?.uid}').collection('myposts').doc(title);
-                    userCollectionReference.set({
-                      "title":_titleTextEditController.text,
-                      "content":_contentTextEditController.text,
-                      "writer": user,
-                      "date":date,
-                      "time":time,
-                      "like":0,
-                      "comment":0,
-                    });
+                    // final userCollectionReference=
+                    //   FirebaseFirestore.instance.collection("users").doc('${FirebaseAuth.instance.currentUser?.uid}').collection('myposts').doc(title);
+                    // userCollectionReference.set({
+                    //   "title":_titleTextEditController.text,
+                    //   "content":_contentTextEditController.text,
+                    //   "writer": user,
+                    //   "date":date,
+                    //   "time":time,
+                    //   "like":0,
+                    //   "comment":0,
+                    // });
                     final postCollectionReference=
                     FirebaseFirestore.instance.collection("posts").doc(title);
                     postCollectionReference.set({
