@@ -108,9 +108,9 @@ class _freeForumDetailState extends State<freeForumDetail> {
   @override
   void initState() {
     super.initState();
+    getComment();
     getPost();
     getUsername();
-    getComment();
   }
 
   @override
@@ -204,10 +204,12 @@ class _freeForumDetailState extends State<freeForumDetail> {
           ],
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Center(
-              child: Container(
+          child:Column(
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Center(
+                  child: Container(
                   color: Colors.white,
                   width: 1500,
                   child: Padding(
@@ -351,26 +353,34 @@ class _freeForumDetailState extends State<freeForumDetail> {
                           width: 1500,
                           height: 0.4,
                           color: Colors.grey,
-                          // child: FutureBuilder<void>(
-                          //   future: getComment(),
-                          //   builder: (context, snapshot) {
-                          //     return ListView.builder(
-                          //       itemCount: commentSet.length,
-                          //       itemBuilder: (BuildContext context, int index) {
-                          //         commentBox(context, 0, commentSet[index]);
-                          //       },
-                          //     );
-                          //   },
-                          // ),
                         ),
-                        for (int i = 0; i < commentSet.length; i++)
-                          commentBox(context, commentSet[i], i),
                       ],
                     ),
                   )
               ),
             ),
-          ),
+              ),
+              SizedBox(
+                height:1000,
+                child:FutureBuilder<void>(
+                future: getComment(),
+                builder: (context, snapshot) {
+                  return SizedBox(
+                      child:ListView.builder(
+                    itemCount: commentSet.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return commentBox(context, commentSet[index],0);
+                    },
+                  )
+                  );
+                  // return (
+                  //   for (int i = 0; i < commentSet.length; i++)
+                  //     commentBox(context, commentSet[i], i);
+                  // );
+                },
+              ),
+              )],
+          )
         ),
         bottomSheet: Padding(
           padding: EdgeInsets.only(
