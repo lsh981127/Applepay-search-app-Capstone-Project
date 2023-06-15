@@ -169,7 +169,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Container(
-                    height: 160,
+                    height: 180,
                     alignment: Alignment.topLeft,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -219,7 +219,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: Container(
-                    height: 160,
+                    height: 180,
                     alignment: Alignment.topLeft,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
