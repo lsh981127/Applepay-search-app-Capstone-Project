@@ -1,16 +1,22 @@
 # newcapstone
 
-A new Flutter project.
+2023년 1학기 캡스톤 디자인(박은찬 교수님) 6조 프로젝트
+- 제목 : 애플페이 가맹점 정보제공 서비스
+- 팀원 : 2017110922 이상민, 2017112197 이승훈, 2019112132 박수련, 2023130002 정경인
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+ 코드 및 브런치 구성
+ - main 브런치
+    - 웹과 안드로이드 앱을 실행하는 브런치
+- lsh-ios
+    - ios앱을 실행하는 브런치
+   
+- 파일의 경로
+    - lib 파일 → main.dart
+        - 애플리케이션 실행 시 시작하는  파일
+    - lib 파일 → src 파일 → googleMap.dart
+        - 구글맵 및 시작화면 파일
+    - lib 파일 → mypage 파일
+        - 마이페이지를 위한 코드 파일들이 위치
+    - lib 파일 → community 파일
+        - 커뮤니티 페이지들을 위한 코드 파일들이 위치
