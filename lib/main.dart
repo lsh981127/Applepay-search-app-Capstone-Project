@@ -30,8 +30,9 @@ Widget platformChoice() {
   if(kIsWeb) {
     return googleMapPage();
   } else {
-    return BlocProvider(
-        create: (_) => HomeCubit(), child: googleMapPage());
+    // return BlocProvider(
+    //     create: (_) => HomeCubit(), child: googleMapPage());
+    return googleMapPage();
   }
 }
 

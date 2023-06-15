@@ -727,12 +727,227 @@ class _googleMapPageState extends State<googleMapPage> {
 
   Widget appBottom() {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.grey[850],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Column(
+              children: [
+                UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[850],
+                  ),
+                  accountName: Text(
+                    '사용자 이름 : ${userInfoName}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  accountEmail: Text(
+                    '사용자 이메일 : ${userInfoEmail}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.map,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Home'),
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const googleMapPage()),
+                            (Route<dynamic> route) => false);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.list_bullet,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Community'),
+                  onTap: () async {
+                    (FirebaseAuth.instance.currentUser != null)
+                        ? Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => freeForum()),
+                    )
+                        : kIsWeb
+                        ? await signInWithGoogleWeb()
+                        : await signInWithGoogleApp();
+
+                    if(FirebaseAuth.instance.currentUser != null){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => freeForum()),
+                      );
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Icon(
+                    CupertinoIcons.profile_circled,
+                    color: Colors.grey[850],
+                    size: 25,
+                  ),
+                  title: Text('Mypage'),
+                  onTap: () async {
+                    (FirebaseAuth.instance.currentUser != null)
+                        ? Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => ProfilePage()),
+                    )
+                        : kIsWeb
+                        ? await signInWithGoogleWeb()
+                        : await signInWithGoogleApp();
+                    if(FirebaseAuth.instance.currentUser != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage()),
+                      );
+                    }
+                  },
+                ),
+                (FirebaseAuth.instance.currentUser == null)
+                    ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (!context.mounted) {
+                        return;
+                      }
+                      // showAlertDialog();
+                      // await signInWithGoogle();
+                      kIsWeb
+                          ? await signInWithGoogleWeb()
+                          : await signInWithGoogleApp();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                              const googleMapPage()),
+                              (Route<dynamic> route) => false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
+                        ),
+                        side: const BorderSide(
+                          color: Colors.grey,
+                        )),
+                    child: Container(
+                      height: 55,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            child: const Image(
+                              image: AssetImage('google_icon.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Text(
+                            "구글 로그인",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+                    : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (!context.mounted) {
+                        return;
+                      }
+                      await logoutAccount();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0.0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50)),
+                        ),
+                        side: const BorderSide(
+                          color: Colors.grey,
+                        )),
+                    child: Container(
+                      height: 55,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            child: const Image(
+                              image: AssetImage('google_icon.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Text(
+                            "로그아웃",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                height: 1.5),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       body: Stack(children: [
         GoogleMap(
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
-          onCameraMove: (CameraPosition cameraPosition) =>
-              centerPoint = cameraPosition.target,
+          onCameraMove: (CameraPosition cameraPosition) {
+            centerPoint = cameraPosition.target;
+            distanceMoving = Geolocator.distanceBetween(
+                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
+            print(distanceMoving);
+            if (distanceMoving >= 450) {setState(() {
+              _visible=true;
+            });}
+          },
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 16.0,
@@ -742,17 +957,17 @@ class _googleMapPageState extends State<googleMapPage> {
           compassEnabled: true,
           myLocationButtonEnabled: false,
         ),
-        GestureDetector(
-          onPanUpdate: (details) {
-            distanceMoving = Geolocator.distanceBetween(currentLatitude,
-                currentLongitude, centerPoint.latitude, centerPoint.longitude);
-            if (distanceMoving >= 450) {
-              setState(() {
-                _visible = true;
-              });
-            }
-          },
-        ),
+        // GestureDetector(
+        //   onPanUpdate: (details) {
+        //     distanceMoving = Geolocator.distanceBetween(currentLatitude,
+        //         currentLongitude, centerPoint.latitude, centerPoint.longitude);
+        //     if (distanceMoving >= 450) {
+        //       setState(() {
+        //         _visible = true;
+        //       });
+        //     }
+        //   },
+        // ),
         Container(
             alignment: Alignment.bottomCenter,
             margin: EdgeInsets.only(bottom: 16),
