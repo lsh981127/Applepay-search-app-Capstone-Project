@@ -18,7 +18,6 @@ import '../community/freeforum.dart';
 import '../community/home_cubit.dart';
 import '../community/profile.dart';
 
-
 class googleMapPage extends StatefulWidget {
   const googleMapPage({Key? key}) : super(key: key);
 
@@ -44,6 +43,7 @@ class GSheetsAPIConfig {
   ''';
   static final dataGSheets = GSheets(_credentials);
 }
+
 class RealDataSetService {
   final String _spreadsheetId = '1JXnZLWDw_uF5h9--1t6r2yLQappqFUGnSE1J3c5xt1I';
 }
@@ -53,12 +53,15 @@ class _googleMapPageState extends State<googleMapPage> {
   double currentLongitude = 0;
   late GoogleMapController mapController;
   late LatLng centerPoint = LatLng(0, 0);
-  late BitmapDescriptor markerAppIcon1, markerAppIcon2, markerAppIcon3, markerAppIcon4;
+  late BitmapDescriptor markerAppIcon1,
+      markerAppIcon2,
+      markerAppIcon3,
+      markerAppIcon4;
 
   bool _myLocationEnabled = false;
   bool _visible = false;
-  double distanceMoving=0;
-  late Uint8List markerIcon1,markerIcon2,markerIcon3,markerIcon4;
+  double distanceMoving = 0;
+  late Uint8List markerIcon1, markerIcon2, markerIcon3, markerIcon4;
 
   final LatLng _center = const LatLng(37.5580918, 126.9982178);
   final Set<Marker> _markers = {};
@@ -116,7 +119,7 @@ class _googleMapPageState extends State<googleMapPage> {
     mapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
     setState(() {
       _myLocationEnabled = true;
-      _visible=false;
+      _visible = false;
     });
     _loadMarkers();
   }
@@ -135,7 +138,7 @@ class _googleMapPageState extends State<googleMapPage> {
 
     try {
       final UserCredential userCredential =
-      await auth.signInWithPopup(authProvider);
+          await auth.signInWithPopup(authProvider);
       user = userCredential.user;
     } catch (e) {
       print(e);
@@ -165,29 +168,31 @@ class _googleMapPageState extends State<googleMapPage> {
         },
         SetOptions(merge: true),
       );
-
     }
     return user;
   }
 
-  Future<void> signInWithGoogleApp() async {    //앱용 로그인 코드
-    final GoogleSignInAccount? googleUser = await GoogleSignIn(
-        scopes: ["email", "profile"]).signIn();
-    final GoogleSignInAuthentication? googleAuth = await googleUser
-        ?.authentication;
+  Future<void> signInWithGoogleApp() async {
+    //앱용 로그인 코드
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(scopes: ["email", "profile"]).signIn();
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
 
-    final UserCredential googleUserCredential = await FirebaseAuth.instance
-        .signInWithCredential(credential);
+    final UserCredential googleUserCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
     // print(googleUserCredential.additionalUserInfo?.profile);
     // print(googleUserCredential.user?.email);
 
     DocumentSnapshot loginCheckDoc = await FirebaseFirestore.instance
-        .collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
 
     if (!loginCheckDoc.exists) {
       await FirebaseFirestore.instance
@@ -213,86 +218,95 @@ class _googleMapPageState extends State<googleMapPage> {
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const googleMapPage()),
-            (Route<dynamic> route) => false);
+        (Route<dynamic> route) => false);
   }
+
   void _loadMarkers() {
     List<Marker> markers = [];
     double distanceInMeters;
     setState(() {
       _markers.clear();
     });
-      for (var i = 0; i < _gsheetData.length; i++) {
-        final name = _gsheetData[i]['name'];
-        final latitude = _gsheetData[i]['latitude'];
-        final longitude = _gsheetData[i]['longitude'];
-        final address = _gsheetData[i]['address'];
-        final category = _gsheetData[i]['category'];
-        distanceInMeters = Geolocator.distanceBetween(
-            currentLatitude, currentLongitude, latitude, longitude);
-        if (distanceInMeters <= 500) {
-          if (category == "카페" && cafe) {
-            markers.add(
-              Marker(
-                markerId: MarkerId(name),
-                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon1) : markerAppIcon1,
-                position: LatLng(latitude, longitude),
-                infoWindow: InfoWindow(
-                  title: name,
-                  snippet: address,
-                ),
+    for (var i = 0; i < _gsheetData.length; i++) {
+      final name = _gsheetData[i]['name'];
+      final latitude = _gsheetData[i]['latitude'];
+      final longitude = _gsheetData[i]['longitude'];
+      final address = _gsheetData[i]['address'];
+      final category = _gsheetData[i]['category'];
+      distanceInMeters = Geolocator.distanceBetween(
+          currentLatitude, currentLongitude, latitude, longitude);
+      if (distanceInMeters <= 500) {
+        if (category == "카페" && cafe) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(name),
+              icon: kIsWeb
+                  ? BitmapDescriptor.fromBytes(markerIcon1)
+                  : markerAppIcon1,
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: name,
+                snippet: address,
               ),
-             );
-            setState(() {
-               _markers.addAll(markers);
-             });
-          } else if (category=="대형마트"&& grocery) {
-            markers.add(
-              Marker(
-                markerId: MarkerId(name),
-                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon2) : markerAppIcon2,
-                position: LatLng(latitude, longitude),
-                infoWindow: InfoWindow(
-                  title: name,
-                  snippet: address,
-                ),
+            ),
+          );
+          setState(() {
+            _markers.addAll(markers);
+          });
+        } else if (category == "대형마트" && grocery) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(name),
+              icon: kIsWeb
+                  ? BitmapDescriptor.fromBytes(markerIcon2)
+                  : markerAppIcon2,
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: name,
+                snippet: address,
               ),
-            );
-            setState(() {
-              _markers.addAll(markers);
-            });
-          } else if (category == "음식점"&& restaurant) {
-            markers.add(
-              Marker(
-                markerId: MarkerId(name),
-                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon3) : markerAppIcon3,
-                position: LatLng(latitude, longitude),
-                infoWindow: InfoWindow(
-                  title: name,
-                  snippet: address,
-                ),
+            ),
+          );
+          setState(() {
+            _markers.addAll(markers);
+          });
+        } else if (category == "음식점" && restaurant) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(name),
+              icon: kIsWeb
+                  ? BitmapDescriptor.fromBytes(markerIcon3)
+                  : markerAppIcon3,
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: name,
+                snippet: address,
               ),
-            );
-            setState(() {
-              _markers.addAll(markers);
-            });
-          } else if (category == "편의점" && store) {
-            markers.add(
-              Marker(
-                markerId: MarkerId(name),
-                icon: kIsWeb ? BitmapDescriptor.fromBytes(markerIcon4) : markerAppIcon4,
-                position: LatLng(latitude, longitude),
-                infoWindow: InfoWindow(
-                  title: name,
-                  snippet: address,
-                ),
+            ),
+          );
+          setState(() {
+            _markers.addAll(markers);
+          });
+        } else if (category == "편의점" && store) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(name),
+              icon: kIsWeb
+                  ? BitmapDescriptor.fromBytes(markerIcon4)
+                  : markerAppIcon4,
+              position: LatLng(latitude, longitude),
+              infoWindow: InfoWindow(
+                title: name,
+                snippet: address,
               ),
-            );
-            setState(() {
-              _markers.addAll(markers);
-            });
-          }
+            ),
+          );
+          setState(() {
+            _markers.addAll(markers);
+          });
         }
       }
+    }
   }
 
   Future<void> get_gsheet() async {
@@ -313,7 +327,8 @@ class _googleMapPageState extends State<googleMapPage> {
       ''';
 
     final gsheets = GSheets(credentials);
-    final spreadsheet = await gsheets.spreadsheet('1NfTbHtaI6g9GLmtd3GOQ7CM4wLT_mGTOoDfSsq5ZizY');
+    final spreadsheet = await gsheets
+        .spreadsheet('1NfTbHtaI6g9GLmtd3GOQ7CM4wLT_mGTOoDfSsq5ZizY');
 
     final worksheet = spreadsheet.worksheetByTitle('시트1');
     final valueRange = await worksheet?.values.allRows();
@@ -326,33 +341,39 @@ class _googleMapPageState extends State<googleMapPage> {
     List<List>? rowsAsListOfValues = data;
     List<List<dynamic>> dataWithoutHeader = rowsAsListOfValues!.sublist(1);
     _gsheetData = dataWithoutHeader.map((row) {
-      final epsg2097Coords = Point(x:double.parse(row[4].toString()), y:double.parse(row[5].toString()));
-      final latLong=srcProj.transform(dstnProj, epsg2097Coords);
-      return{
-        'name':row[0],
-        'latitude':latLong.toArray()[1],
-        'longitude':latLong.toArray()[0],
-        'address':row[3],
-        'category':row[1]
+      final epsg2097Coords = Point(
+          x: double.parse(row[4].toString()),
+          y: double.parse(row[5].toString()));
+      final latLong = srcProj.transform(dstnProj, epsg2097Coords);
+      return {
+        'name': row[0],
+        'latitude': latLong.toArray()[1],
+        'longitude': latLong.toArray()[0],
+        'address': row[3],
+        'category': row[1]
       };
     }).toList();
   }
 
-   void _onMapCreated(GoogleMapController controller) {
-     mapController=controller;
-   }
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
-  void setCustomMapPin() async{
-    if(kIsWeb) {
-      markerIcon1=await getBytesFromAsset('marker_images/green.png',5);
-      markerIcon2=await getBytesFromAsset('marker_images/purple.png',5);
-      markerIcon3=await getBytesFromAsset('marker_images/red.png',5);
-      markerIcon4=await getBytesFromAsset('marker_images/blue.png',1);
+  void setCustomMapPin() async {
+    if (kIsWeb) {
+      markerIcon1 = await getBytesFromAsset('marker_images/green.png', 5);
+      markerIcon2 = await getBytesFromAsset('marker_images/purple.png', 5);
+      markerIcon3 = await getBytesFromAsset('marker_images/red.png', 5);
+      markerIcon4 = await getBytesFromAsset('marker_images/blue.png', 1);
     } else {
-      markerAppIcon1 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
-      markerAppIcon2 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
-      markerAppIcon3 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
-      markerAppIcon4 = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+      markerAppIcon1 =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+      markerAppIcon2 =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta);
+      markerAppIcon3 =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+      markerAppIcon4 =
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
     }
   }
 
@@ -366,11 +387,11 @@ class _googleMapPageState extends State<googleMapPage> {
         .asUint8List();
   }
 
-  bool store=true;
-  bool grocery=true;
-  bool cafe=true;
-  bool mall=true;
-  bool restaurant=true;
+  bool store = true;
+  bool grocery = true;
+  bool cafe = true;
+  bool mall = true;
+  bool restaurant = true;
 
   Map<String, bool> filters = {
     "편의점": true,
@@ -381,11 +402,11 @@ class _googleMapPageState extends State<googleMapPage> {
   };
 
   List<Icon> icons = [
-    Icon(Icons.store, color:Colors.black),
-    Icon(Icons.local_grocery_store, color:Colors.black),
-    Icon(Icons.local_cafe, color:Colors.black),
-    Icon(Icons.local_mall, color:Colors.black),
-    Icon(Icons.restaurant, color:Colors.black)
+    Icon(Icons.store, color: Colors.black),
+    Icon(Icons.local_grocery_store, color: Colors.black),
+    Icon(Icons.local_cafe, color: Colors.black),
+    Icon(Icons.local_mall, color: Colors.black),
+    Icon(Icons.restaurant, color: Colors.black)
   ];
 
   Widget webDrawer() {
@@ -417,7 +438,9 @@ class _googleMapPageState extends State<googleMapPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 ListTile(
                   leading: Icon(
                     Icons.map,
@@ -425,9 +448,11 @@ class _googleMapPageState extends State<googleMapPage> {
                     size: 25,
                   ),
                   title: Text('Home'),
-                  onTap: (){
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                    const googleMapPage()), (Route<dynamic> route) => false);
+                  onTap: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const googleMapPage()),
+                        (Route<dynamic> route) => false);
                   },
                 ),
                 ListTile(
@@ -437,9 +462,22 @@ class _googleMapPageState extends State<googleMapPage> {
                     size: 25,
                   ),
                   title: Text('Community'),
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                        freeForum()));
+                  onTap: () async {
+                    (FirebaseAuth.instance.currentUser != null)
+                        ? Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => freeForum()),
+                    )
+                        : kIsWeb
+                        ? await signInWithGoogleWeb()
+                        : await signInWithGoogleApp();
+
+                    if(FirebaseAuth.instance.currentUser != null){
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => freeForum()),
+                      );
+                    }
                   },
                 ),
                 ListTile(
@@ -449,117 +487,133 @@ class _googleMapPageState extends State<googleMapPage> {
                     size: 25,
                   ),
                   title: Text('Mypage'),
-                  onTap: (){
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                    const ProfilePage()), (Route<dynamic> route) => false);
+                  onTap: () async {
+                    (FirebaseAuth.instance.currentUser != null)
+                        ? Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => ProfilePage()),
+                          )
+                        : kIsWeb
+                            ? await signInWithGoogleWeb()
+                            : await signInWithGoogleApp();
+                    if(FirebaseAuth.instance.currentUser != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage()),
+                      );
+                    }
                   },
                 ),
-                (FirebaseAuth.instance.currentUser == null) ?
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if(!context.mounted) {
-                        return ;
-                      }
-                      // showAlertDialog();
-                      // await signInWithGoogle();
-                      kIsWeb ? await signInWithGoogleWeb() : await signInWithGoogleApp();
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                      const googleMapPage()), (Route<dynamic> route) => false);
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0.0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(50)
+                (FirebaseAuth.instance.currentUser == null)
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (!context.mounted) {
+                              return;
+                            }
+                            // showAlertDialog();
+                            // await signInWithGoogle();
+                            kIsWeb
+                                ? await signInWithGoogleWeb()
+                                : await signInWithGoogleApp();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const googleMapPage()),
+                                (Route<dynamic> route) => false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0.0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                              ),
+                              side: const BorderSide(
+                                color: Colors.grey,
+                              )),
+                          child: Container(
+                            height: 55,
+                            width: 300,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Container(
+                                  width: 22,
+                                  height: 22,
+                                  child: const Image(
+                                    image: AssetImage('google_icon.png'),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Text(
+                                  "구글 로그인",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      height: 1.5),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        side: const BorderSide(
-                          color: Colors.grey,
-                        )
-                    ),
-                    child: Container(
-                      height: 55,
-                      width: 300,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children:  [
-                          Container(
-                            width: 22,
-                            height: 22,
-                            child: const Image(
-                              image: AssetImage('google_icon.png'),
-                              fit: BoxFit.fill,
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (!context.mounted) {
+                              return;
+                            }
+                            await logoutAccount();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0.0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                              ),
+                              side: const BorderSide(
+                                color: Colors.grey,
+                              )),
+                          child: Container(
+                            height: 55,
+                            width: 300,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Container(
+                                  width: 22,
+                                  height: 22,
+                                  child: const Image(
+                                    image: AssetImage('google_icon.png'),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Text(
+                                  "로그아웃",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      height: 1.5),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                              ],
                             ),
-                          ),
-                          Text("구글 로그인",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                height: 1.5
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                        ],
-                      ),
-                    ),
-                  ),
-                ) : Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if(!context.mounted) {
-                        return ;
-                      }
-                      await logoutAccount();
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0.0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(50)
                           ),
                         ),
-                        side: const BorderSide(
-                          color: Colors.grey,
-                        )
-                    ),
-                    child: Container(
-                      height: 55,
-                      width: 300,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children:  [
-                          Container(
-                            width: 22,
-                            height: 22,
-                            child: const Image(
-                              image: AssetImage('google_icon.png'),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          Text("로그아웃",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                height: 1.5
-                            ),
-                          ),
-                          SizedBox(width: 10,),
-                        ],
                       ),
-                    ),
-
-                  ),
-                ),
-
               ],
             ),
           ],
@@ -569,7 +623,8 @@ class _googleMapPageState extends State<googleMapPage> {
         GoogleMap(
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
-          onCameraMove: (CameraPosition cameraPosition) => centerPoint = cameraPosition.target,
+          onCameraMove: (CameraPosition cameraPosition) =>
+              centerPoint = cameraPosition.target,
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 16.0,
@@ -580,38 +635,39 @@ class _googleMapPageState extends State<googleMapPage> {
           myLocationButtonEnabled: false,
         ),
         GestureDetector(
-          onPanUpdate: (details){
-            distanceMoving = Geolocator.distanceBetween(
-                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
-            if (distanceMoving >= 450) {setState(() {
-              _visible=true;
-            });}
+          onPanUpdate: (details) {
+            distanceMoving = Geolocator.distanceBetween(currentLatitude,
+                currentLongitude, centerPoint.latitude, centerPoint.longitude);
+            if (distanceMoving >= 450) {
+              setState(() {
+                _visible = true;
+              });
+            }
           },
         ),
         Container(
-          alignment: Alignment.bottomCenter,
-          margin: EdgeInsets.only(bottom: 16),
-          child:
-          Visibility(
-            visible: _visible,
-            child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(	//모서리를 둥글게
-                      borderRadius: BorderRadius.circular(50)),
-                  side:BorderSide(width:0.5, color:Colors.black)),
-                onPressed: (){
-                  currentLatitude=centerPoint.latitude;
-                  currentLongitude=centerPoint.longitude;
-                  _loadMarkers();
+            alignment: Alignment.bottomCenter,
+            margin: EdgeInsets.only(bottom: 16),
+            child: Visibility(
+              visible: _visible,
+              child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                          //모서리를 둥글게
+                          borderRadius: BorderRadius.circular(50)),
+                      side: BorderSide(width: 0.5, color: Colors.black)),
+                  onPressed: () {
+                    currentLatitude = centerPoint.latitude;
+                    currentLongitude = centerPoint.longitude;
+                    _loadMarkers();
                   },
-                icon: Icon(Icons.refresh, color:Colors.black),
-                label:Text('현재위치에서 재검색', style: TextStyle(color:Colors.black))
-            ),
-          )
-        ),
+                  icon: Icon(Icons.refresh, color: Colors.black),
+                  label: Text('현재위치에서 재검색',
+                      style: TextStyle(color: Colors.black))),
+            )),
         Positioned(
           bottom: 16,
           left: 16,
@@ -639,21 +695,22 @@ class _googleMapPageState extends State<googleMapPage> {
                 //index번째의 view, 0부터 시작
                 padding: new EdgeInsets.all(5.0),
                 child: GestureDetector(
-                  onTap: () {setState(() {
-                    filters[filters.keys.elementAt(index)] =
-                    !filters.values.elementAt(index);
-                    if(index==0) store = !store;
-                    if(index ==1) grocery = !grocery;
-                    if(index ==2) cafe = !cafe;
-                    if(index==3)  mall = !mall;
-                    if(index==4)  restaurant = !restaurant;
-                    _loadMarkers();
-                  });
-                    },
+                  onTap: () {
+                    setState(() {
+                      filters[filters.keys.elementAt(index)] =
+                          !filters.values.elementAt(index);
+                      if (index == 0) store = !store;
+                      if (index == 1) grocery = !grocery;
+                      if (index == 2) cafe = !cafe;
+                      if (index == 3) mall = !mall;
+                      if (index == 4) restaurant = !restaurant;
+                      _loadMarkers();
+                    });
+                  },
                   child: Chip(
                       avatar: icons[index],
                       padding: new EdgeInsets.all(5.0),
-                      side:BorderSide(width:0.5, color:Colors.black),
+                      side: BorderSide(width: 0.5, color: Colors.black),
                       elevation: 8,
                       backgroundColor: filters.values.elementAt(index)
                           ? Colors.white
@@ -674,7 +731,8 @@ class _googleMapPageState extends State<googleMapPage> {
         GoogleMap(
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
-          onCameraMove: (CameraPosition cameraPosition) => centerPoint = cameraPosition.target,
+          onCameraMove: (CameraPosition cameraPosition) =>
+              centerPoint = cameraPosition.target,
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 16.0,
@@ -685,38 +743,39 @@ class _googleMapPageState extends State<googleMapPage> {
           myLocationButtonEnabled: false,
         ),
         GestureDetector(
-          onPanUpdate: (details){
-            distanceMoving = Geolocator.distanceBetween(
-                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
-            if (distanceMoving >= 450) {setState(() {
-              _visible=true;
-            });}
+          onPanUpdate: (details) {
+            distanceMoving = Geolocator.distanceBetween(currentLatitude,
+                currentLongitude, centerPoint.latitude, centerPoint.longitude);
+            if (distanceMoving >= 450) {
+              setState(() {
+                _visible = true;
+              });
+            }
           },
         ),
         Container(
             alignment: Alignment.bottomCenter,
             margin: EdgeInsets.only(bottom: 16),
-            child:
-            Visibility(
+            child: Visibility(
               visible: _visible,
               child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                       elevation: 8,
-                      shape: RoundedRectangleBorder(	//모서리를 둥글게
+                      shape: RoundedRectangleBorder(
+                          //모서리를 둥글게
                           borderRadius: BorderRadius.circular(50)),
-                      side:BorderSide(width:0.5, color:Colors.black)),
-                  onPressed: (){
-                    currentLatitude=centerPoint.latitude;
-                    currentLongitude=centerPoint.longitude;
+                      side: BorderSide(width: 0.5, color: Colors.black)),
+                  onPressed: () {
+                    currentLatitude = centerPoint.latitude;
+                    currentLongitude = centerPoint.longitude;
                     _loadMarkers();
                   },
-                  icon: Icon(Icons.refresh, color:Colors.black),
-                  label:Text('현재위치에서 재검색', style: TextStyle(color:Colors.black))
-              ),
-            )
-        ),
+                  icon: Icon(Icons.refresh, color: Colors.black),
+                  label: Text('현재위치에서 재검색',
+                      style: TextStyle(color: Colors.black))),
+            )),
         Positioned(
           bottom: 16,
           left: 16,
@@ -745,21 +804,22 @@ class _googleMapPageState extends State<googleMapPage> {
                 //index번째의 view, 0부터 시작
                 padding: new EdgeInsets.all(5.0),
                 child: GestureDetector(
-                  onTap: () {setState(() {
-                    filters[filters.keys.elementAt(index)] =
-                    !filters.values.elementAt(index);
-                    if(index==0) store = !store;
-                    if(index ==1) grocery = !grocery;
-                    if(index ==2) cafe = !cafe;
-                    if(index==3)  mall = !mall;
-                    if(index==4)  restaurant = !restaurant;
-                    _loadMarkers();
-                  });
+                  onTap: () {
+                    setState(() {
+                      filters[filters.keys.elementAt(index)] =
+                          !filters.values.elementAt(index);
+                      if (index == 0) store = !store;
+                      if (index == 1) grocery = !grocery;
+                      if (index == 2) cafe = !cafe;
+                      if (index == 3) mall = !mall;
+                      if (index == 4) restaurant = !restaurant;
+                      _loadMarkers();
+                    });
                   },
                   child: Chip(
                       avatar: icons[index],
                       padding: new EdgeInsets.all(5.0),
-                      side:BorderSide(width:0.5, color:Colors.black),
+                      side: BorderSide(width: 0.5, color: Colors.black),
                       elevation: 8,
                       backgroundColor: filters.values.elementAt(index)
                           ? Colors.white

@@ -5,6 +5,7 @@ import 'Post.dart';
 import 'color.dart';
 import 'database.dart';
 import 'freeforum_detail.dart';
+import 'freeforum.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -34,22 +35,16 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     double keyboard = MediaQuery.of(context).viewInsets.bottom;
 
-    Post post4 = Post.clone(dataBase.post1);
-    Post post5 = Post.clone(dataBase.post2);
-    Post post6 = Post.clone(dataBase.post3);
-    Post post7 = Post.clone(dataBase.post1);
-    Post post8 = Post.clone(dataBase.post2);
-    Post post9 = Post.clone(dataBase.post3);
+    // Post post4 = Post.clone(dataBase.post1);
+    // Post post5 = Post.clone(dataBase.post2);
+    // Post post6 = Post.clone(dataBase.post3);
+    // Post post7 = Post.clone(dataBase.post1);
+    // Post post8 = Post.clone(dataBase.post2);
+    // Post post9 = Post.clone(dataBase.post3);
     List<Post> postSet = [
       dataBase.post1,
       dataBase.post2,
       dataBase.post3,
-      post4,
-      post5,
-      post6,
-      post7,
-      post8,
-      post9
     ];
 
     late List<int> set = [];
@@ -170,8 +165,8 @@ Widget info(BuildContext context, Post post) {
 }
 
 Widget searchBox(BuildContext context, Post post) {
-  int like = post.like;
-  int comment = post.comment.length;
+  // int like = post.like;
+  // int comment = post.comment.length;
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -190,7 +185,7 @@ Widget searchBox(BuildContext context, Post post) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                post.title,
+                "post.title",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
               ),
               SizedBox(
@@ -199,7 +194,8 @@ Widget searchBox(BuildContext context, Post post) {
               Container(
                 width: 380,
                 child: Text(
-                  post.contents,
+                  // post.contents,
+                  "",
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 15.0, color: Colors.blueGrey),
                 ),
@@ -215,7 +211,7 @@ Widget searchBox(BuildContext context, Post post) {
                     Row(
                       children: [
                         Text(
-                          post.time,
+                          "post.time",
                           style:
                           TextStyle(fontSize: 13.0, color: Colors.blueGrey),
                         ),
@@ -223,7 +219,7 @@ Widget searchBox(BuildContext context, Post post) {
                           width: 5.0,
                         ),
                         Text(
-                          post.writer,
+                          "post.writer",
                           style:
                           TextStyle(fontSize: 13.0, color: Colors.blueGrey),
                         ),
@@ -240,7 +236,7 @@ Widget searchBox(BuildContext context, Post post) {
                           width: 5,
                         ),
                         Text(
-                          "$like",
+                          "like",
                           style: TextStyle(
                               color: Palette.everyRed, fontSize: 14.0),
                         ),
@@ -256,7 +252,7 @@ Widget searchBox(BuildContext context, Post post) {
                           width: 5,
                         ),
                         Text(
-                          "$comment",
+                          "comment",
                           style: TextStyle(
                               color: Colors.blueAccent, fontSize: 14.0),
                         ),
