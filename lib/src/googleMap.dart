@@ -674,7 +674,15 @@ class _googleMapPageState extends State<googleMapPage> {
         GoogleMap(
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
-          onCameraMove: (CameraPosition cameraPosition) => centerPoint = cameraPosition.target,
+          onCameraMove: (CameraPosition cameraPosition) {
+            centerPoint = cameraPosition.target;
+            distanceMoving = Geolocator.distanceBetween(
+                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
+            print(distanceMoving);
+            if (distanceMoving >= 450) {setState(() {
+              _visible=true;
+            });}
+            },
           initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 16.0,
@@ -684,22 +692,14 @@ class _googleMapPageState extends State<googleMapPage> {
           compassEnabled: true,
           myLocationButtonEnabled: false,
         ),
-        GestureDetector(
-          onPanUpdate: (details){
-            distanceMoving = Geolocator.distanceBetween(
-                currentLatitude, currentLongitude, centerPoint.latitude, centerPoint.longitude);
-            if (distanceMoving >= 450) {setState(() {
-              _visible=true;
-            });}
-          },
-        ),
+
         Container(
             alignment: Alignment.bottomCenter,
             margin: EdgeInsets.only(bottom: 16),
             child:
             Visibility(
               visible: _visible,
-              child: ElevatedButton.icon(
+              child:  ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
