@@ -28,9 +28,11 @@
 ## 메인페이지
 ### 웹화면
 ![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/8af9fa26-91f9-4002-b277-caac909b5ea2)
+<br />
 현위치 주변의 가맹점의 위치를 카테고리별로 확인할 수 있음
 
 ![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/840845e7-28c7-46dd-a078-1e6680703dca)
+<br />
 카테고리 버튼을 통해 원하는 항목의 가맹점들만 필터링할 수 있음
 
 ### iOS화면
@@ -42,6 +44,7 @@
 ## 커뮤니티
 ![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/74cc9f83-7f4c-403a-8cd2-7f591313c68a)
 ![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/8e4beb89-2beb-4f79-b510-e11036732e3c)
+<br />
 애플페이 가맹점들에 대한 이용후기를 공유할 수 있는 커뮤니티 공간을 제공함 
 
 
