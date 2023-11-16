@@ -26,4 +26,22 @@
 애플페이는 실물 카드가 없어도 애플사의 제품으로 결제가 가능하다. 그러므로 카드를 가지고 있지 않을 때 유용하다. 만약 실물 카드를 소지하지 않았지만 급하게 무언가를 구매해야 하는 경우, 근처의 모든 가게에 가서 애플페이를 지원하는지 물어보기는 어렵다. 이 때 지도에 표시된 애플페이 가맹점을 보고 가장 가까운 가맹점을 지도의 지시를 보고 찾아갈 수 있어 애플페이가 상용화가 되기 전 까지 사용자가 불편함을 최대한으로 느끼지 않도록 한다.
 
 ## 메인페이지
+### 웹화면
+![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/8af9fa26-91f9-4002-b277-caac909b5ea2)
+현위치 주변의 가맹점의 위치를 카테고리별로 확인할 수 있음
+
+![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/840845e7-28c7-46dd-a078-1e6680703dca)
+카테고리 버튼을 통해 원하는 항목의 가맹점들만 필터링할 수 있음
+
+### iOS화면
+![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/c5cc0481-570e-4576-8354-01a681ffb98f)
+
+## 구글 로그인
+![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/0c315fdb-10d2-48cc-9cec-603d29d4ed2e)
+
+## 커뮤니티
+![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/74cc9f83-7f4c-403a-8cd2-7f591313c68a)
+![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/8e4beb89-2beb-4f79-b510-e11036732e3c)
+애플페이 가맹점들에 대한 이용후기를 공유할 수 있는 커뮤니티 공간을 제공함 
+
 
