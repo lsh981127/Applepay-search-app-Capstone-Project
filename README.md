@@ -121,6 +121,47 @@
 
 <br>
 
+
+```
+newcapstone
+ ┣ lib
+ ┃ ┣ community
+ ┃ ┃ ┣ components
+ ┃ ┃ ┃ ┣ custom_elevated_button.dart
+ ┃ ┃ ┃ ┣ custom_textarea.dart
+ ┃ ┃ ┃ ┣ custom_text_form_field.dart
+ ┃ ┃ ┃ ┗ vaildator_util.dart
+ ┃ ┃ ┣ color.dart
+ ┃ ┃ ┣ Comment.dart
+ ┃ ┃ ┣ database.dart
+ ┃ ┃ ┣ freeforum.dart
+ ┃ ┃ ┣ freeforum_detail.dart
+ ┃ ┃ ┣ home_cubit.dart
+ ┃ ┃ ┣ Post.dart
+ ┃ ┃ ┣ profile.dart
+ ┃ ┃ ┣ search.dart
+ ┃ ┃ ┗ write_item.dart
+ ┃ ┣ mypage
+ ┃ ┃ ┣ business_register.dart
+ ┃ ┃ ┣ myposts.dart
+ ┃ ┃ ┗ nickname_change.dart
+ ┃ ┣ src
+ ┃ ┃ ┣ googleMap.dart
+ ┃ ┃ ┣ gsheet_options.dart
+ ┃ ┃ ┣ home_page.dart
+ ┃ ┃ ┗ login_page.dart
+ ┃ ┣ firebase_options.dart
+ ┃ ┗ main.dart
+ ┣ .flutter-plugins
+ ┣ .flutter-plugins-dependencies
+ ┣ .gitignore
+ ┣ .metadata
+ ┣ analysis_options.yaml
+ ┣ pubspec.lock
+ ┣ pubspec.yaml
+ ┗ README.md
+```
+
 ## 회고
 1. 애플페이가 가능한 매장에 대한 API가 없었기 때문에 일일이 공공 데이터를 전처리한 점이 아쉽다. 
 2. 구글 맵 페이지의 마커와 커뮤니티 페이지 간의 유기적 연결성이 부족하다.
