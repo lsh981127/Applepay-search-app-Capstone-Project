@@ -92,9 +92,10 @@
 ### 커뮤니티
 소상공인이 운영하는 가맹점의 애플페이 사용가능 여부를 공유할 수 있으며 매장에 대한 리뷰를 남길 수 있다. 소상공인과 사용자간의 소통의 장을 마련하여 다른 사용자들에게 유익한 정보를 제공하는 효과를 기대할 수 있다.
 <br>
-<div style="display:flex; justify-content:center; margin-top:20px;"
+<div style="display:flex; justify-content:center;">
   <img style="height:500px; margin-right:20px;"
      src="https://velog.velcdn.com/images/tnfus916/post/b9cf1497-31f8-4678-9d73-f9de2bc28711/image.png" />
+  
   <img style="height:500px;"
      src="https://velog.velcdn.com/images/tnfus916/post/15b07bad-af9c-43ce-afa5-0c334106c4a8/image.png" />
 </div>
