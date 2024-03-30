@@ -44,7 +44,7 @@ app.*.map.json
 /android/app/release
 
 
-#.gitignore
+.gitignore
 lib/firebase_options.dart
 lib/src/gsheet_options.dart
 web/index.html
