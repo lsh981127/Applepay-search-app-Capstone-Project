@@ -1,13 +1,11 @@
 # 애플페이 가맹점 위치 제공 서비스 
 
----
 
 2023년 1학기 캡스톤 디자인 프로젝트 (2023.03 ~ 2023.06)
 
 
 
 ## 팀원 소개 
----
 <table style="text-align:center;">
   <tr>
     <th>이상민</th>
@@ -40,17 +38,16 @@
   
 
 ## 기술스택
----
 <div style="display:flex; flex-direction:column;">
   <div style="flex-direction:column; width:50%; ">
-    <b style="marin:0px;">Environment</b>
+    <h3 style="marin:0px;">Environment</h3>
     <div style="display:flex;">
       <img style="margin-right:5px;" 		src="https://img.shields.io/badge/android studio-3DDC84.svg?style=for-the-badge&logo=androidstudio&logoColor=white" />
     <img style="margin-right:5px;" src="https://img.shields.io/badge/xcode-147EFB.svg?style=for-the-badge&logo=xcode&logoColor=white" />
     <img style="margin-right:5px;" src="https://img.shields.io/badge/git-691A99.svg?style=for-the-badge&logo=git&logoColor=white" />
     </div>
   </div>
-  <b>Development</b>
+  <h3>Development</h3>
   <div style="display:flex;">
     <img style="margin-right:5px;" src="https://img.shields.io/badge/flutter-02569B.svg?style=for-the-badge&logo=flutter&logoColor=white" />
     <img style="margin-right:5px;" src="https://img.shields.io/badge/dart-0175C2.svg?style=for-the-badge&logo=dart&logoColor=white" />
@@ -58,7 +55,7 @@
     <img style="margin-right:5px;" src="https://img.shields.io/badge/google cloud-4285F4.svg?style=for-the-badge&logo=googlecloud&logoColor=white" />
     <img style="margin-right:5px;" src="https://img.shields.io/badge/google maps-4285F4.svg?style=for-the-badge&logo=googlemaps&logoColor=white" />
   </div>
-  <b>Communication</b>  
+  <h3>Communication</h3>  
   <div style="display:flex;">
     <img style="margin-right:5px;" src="https://img.shields.io/badge/Notion-F3F3F3.svg?style=for-the-badge&logo=notion&logoColor=black" />
     <img style="margin-right:5px;" src="https://img.shields.io/badge/github-181717.svg?style=for-the-badge&logo=github&logoColor=white" />
@@ -68,13 +65,12 @@
 <br />
 
 ## 프로젝트 소개
----
 2023년 3월부터 한국에 애플페이가 도입되면서 애플페이 가맹점 정보를 제공하여 사용자의 불편함을 줄이고자 프로젝트를 기획하게 되었다. 현재 위치에 따른 애플페이 사용가능 가맹점의 위치 정보를 제공하며 해당 매장에 대한 리뷰를 남길 수 있다. 
 
 <br />
 
 ## 주요 기능
----
+
 ### 위치 찾기
 사용자의 위치를 엑세스하여 500m 이내에 위치하는 애플페이 사용가능 매장을 지도에서 확인할 수 있다. 원하는 위치로 지도를 이동시켜 화면 중심 위치를 기준으로 500m 이내 매장도 확인 가능하다. 
 카테고리에 따라 원하는 가맹점의 업종을 필터링하여 볼 수 있다. 
@@ -101,7 +97,6 @@
 <br />
 
 ## 코드 및 브런치 구성
----
  - main 브런치
     - 웹과 안드로이드 앱을 실행하는 브런치
 - lsh-ios
@@ -120,7 +115,6 @@
 <br />
 
 ## 회고
----
 1. 애플페이가 가능한 매장에 대한 API가 없었기 때문에 일일이 공공 데이터를 전처리한 점이 아쉽다. 
 2. 구글 맵 페이지의 마커와 커뮤니티 페이지 간의 유기적 연결성이 부족하다. 
 3. 매장 검색 기능이 있으면 보다 쉽게 매장을 검색할 수 있을 것 같다. 
