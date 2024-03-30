@@ -34,7 +34,7 @@
   
 </table>
 
-<br />
+<br>
   
 
 ## 기술스택
@@ -62,36 +62,36 @@
   </div>
 </div>
 
-<br />
+<br>
 
 ## 프로젝트 소개
 2023년 3월부터 한국에 애플페이가 도입되면서 애플페이 가맹점 정보를 제공하여 사용자의 불편함을 줄이고자 프로젝트를 기획하게 되었다. 현재 위치에 따른 애플페이 사용가능 가맹점의 위치 정보를 제공하며 해당 매장에 대한 리뷰를 남길 수 있다. 
 
-<br />
+<br>
 
 ## 주요 기능
 
 ### 위치 찾기
 사용자의 위치를 엑세스하여 500m 이내에 위치하는 애플페이 사용가능 매장을 지도에서 확인할 수 있다. 원하는 위치로 지도를 이동시켜 화면 중심 위치를 기준으로 500m 이내 매장도 확인 가능하다. 
 카테고리에 따라 원하는 가맹점의 업종을 필터링하여 볼 수 있다. 
-<br/>
+<br>
 <img style="height:500px;"
      src="https://velog.velcdn.com/images/tnfus916/post/ac928bcc-e3d7-4ee1-9f28-f77d64200734/image.png" />
      
-<br/>
+<br>
 
 ### 로그인
 커뮤니티 페이지 사용을 위한 사용자의 정보를 저장하기 위해 로그인을 필요로 했다. 사용자의 편의를 위해 소셜 로그인을 사용했다. 
-<br/>
+<br>
 <img style="height:500px;"
      src="https://velog.velcdn.com/images/tnfus916/post/73d5f75c-6332-4712-bda1-583b9011831b/image.png" />
 
 
-<br/>
+<br>
 
 ### 커뮤니티
 소상공인이 운영하는 가맹점의 애플페이 사용가능 여부를 공유할 수 있으며 매장에 대한 리뷰를 남길 수 있다. 소상공인과 사용자간의 소통의 장을 마련하여 다른 사용자들에게 유익한 정보를 제공하는 효과를 기대할 수 있다.
-<br/>
+<br>
 <div style="display:flex; justify-content:center;">
   <img style="height:500px; margin-right:20px;"
      src="https://velog.velcdn.com/images/tnfus916/post/b9cf1497-31f8-4678-9d73-f9de2bc28711/image.png" />
@@ -99,7 +99,7 @@
      src="https://velog.velcdn.com/images/tnfus916/post/15b07bad-af9c-43ce-afa5-0c334106c4a8/image.png" />
 </div>
 
-<br />
+<br>
 
 ## 코드 및 브런치 구성
  - main 브런치
@@ -117,7 +117,7 @@
     - lib 파일 → community 파일
         - 커뮤니티 페이지들을 위한 코드 파일들이 위치
 
-<br />
+<br>
 
 ## 회고
 1. 애플페이가 가능한 매장에 대한 API가 없었기 때문에 일일이 공공 데이터를 전처리한 점이 아쉽다. 
