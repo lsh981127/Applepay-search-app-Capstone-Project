@@ -1,11 +1,107 @@
-# newcapstone
+# 애플페이 가맹점 위치 제공 서비스 
 
-2023년 1학기 캡스톤 디자인(박은찬 교수님) 6조 프로젝트
-- 제목 : 애플페이 가맹점 정보제공 서비스
-- 팀원 : 2017110922 이상민, 2017112197 이승훈, 2019112132 박수련, 2023130002 정경인
+---
+
+2023년 1학기 캡스톤 디자인 프로젝트 (2023.03 ~ 2023.06)
 
 
- 코드 및 브런치 구성
+
+## 팀원 소개 
+---
+<table style="text-align:center;">
+  <tr>
+    <th>이상민</th>
+    <th>이승훈</th>
+    <th>박수련</th>
+    <th>정경인</th>	
+  </tr>
+  <tr>
+    <td>팀장 데이터 전처리</td>
+    <td>프로젝트 초기 개발 세팅, iOS 개발, 구글 로그인 연동</td>
+    <td>firestore 데이터 연동</td>
+    <td>UI 디자인, 구글 맵 페이지 UI 개발</td>	
+  </tr>
+  <tr>
+    <td>2017110922</td>
+    <td>2017112197</td>
+    <td>2019112132</td>
+    <td>2023130002</td>	
+  </tr>
+  <tr>
+    <td>경제학과</td>
+    <td>정보통신공학과</td>
+    <td>정보통신공학과</td>
+    <td>정보통신공학과</td>
+  </tr>
+  
+</table>
+
+<br />
+  
+
+## 기술스택
+---
+<div style="display:flex; flex-direction:column;">
+  <div style="flex-direction:column; width:50%; ">
+    <b style="marin:0px;">Environment</b>
+    <div style="display:flex;">
+      <img style="margin-right:5px;" 		src="https://img.shields.io/badge/android studio-3DDC84.svg?style=for-the-badge&logo=androidstudio&logoColor=white" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/xcode-147EFB.svg?style=for-the-badge&logo=xcode&logoColor=white" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/git-691A99.svg?style=for-the-badge&logo=git&logoColor=white" />
+    </div>
+  </div>
+  <b>Development</b>
+  <div style="display:flex;">
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/flutter-02569B.svg?style=for-the-badge&logo=flutter&logoColor=white" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/dart-0175C2.svg?style=for-the-badge&logo=dart&logoColor=white" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/google cloud-4285F4.svg?style=for-the-badge&logo=googlecloud&logoColor=white" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/google maps-4285F4.svg?style=for-the-badge&logo=googlemaps&logoColor=white" />
+  </div>
+  <b>Communication</b>  
+  <div style="display:flex;">
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/Notion-F3F3F3.svg?style=for-the-badge&logo=notion&logoColor=black" />
+    <img style="margin-right:5px;" src="https://img.shields.io/badge/github-181717.svg?style=for-the-badge&logo=github&logoColor=white" />
+  </div>
+</div>
+
+<br />
+
+## 프로젝트 소개
+---
+2023년 3월부터 한국에 애플페이가 도입되면서 애플페이 가맹점 정보를 제공하여 사용자의 불편함을 줄이고자 프로젝트를 기획하게 되었다. 현재 위치에 따른 애플페이 사용가능 가맹점의 위치 정보를 제공하며 해당 매장에 대한 리뷰를 남길 수 있다. 
+
+<br />
+
+## 주요 기능
+---
+### 위치 찾기
+사용자의 위치를 엑세스하여 500m 이내에 위치하는 애플페이 사용가능 매장을 지도에서 확인할 수 있다. 원하는 위치로 지도를 이동시켜 화면 중심 위치를 기준으로 500m 이내 매장도 확인 가능하다. 
+카테고리에 따라 원하는 가맹점의 업종을 필터링하여 볼 수 있다. 
+<img style="height:500px;"
+     src="https://velog.velcdn.com/images/tnfus916/post/ac928bcc-e3d7-4ee1-9f28-f77d64200734/image.png" />
+
+
+### 로그인
+커뮤니티 페이지 사용을 위한 사용자의 정보를 저장하기 위해 로그인을 필요로 했다. 사용자의 편의를 위해 소셜 로그인을 사용했다. 
+<img style="height:500px;"
+     src="https://velog.velcdn.com/images/tnfus916/post/73d5f75c-6332-4712-bda1-583b9011831b/image.png" />
+
+
+
+### 커뮤니티
+소상공인이 운영하는 가맹점의 애플페이 사용가능 여부를 공유할 수 있으며 매장에 대한 리뷰를 남길 수 있다. 소상공인과 사용자간의 소통의 장을 마련하여 다른 사용자들에게 유익한 정보를 제공하는 효과를 기대할 수 있다. 
+<div style="display:flex; justify-content:center;">
+  <img style="height:500px; margin-right:20px;"
+     src="https://velog.velcdn.com/images/tnfus916/post/b9cf1497-31f8-4678-9d73-f9de2bc28711/image.png" />
+  <img style="height:500px;"
+     src="https://velog.velcdn.com/images/tnfus916/post/15b07bad-af9c-43ce-afa5-0c334106c4a8/image.png" />
+</div>
+
+<br />
+
+## 코드 및 브런치 구성
+---
  - main 브런치
     - 웹과 안드로이드 앱을 실행하는 브런치
 - lsh-ios
@@ -21,30 +117,11 @@
     - lib 파일 → community 파일
         - 커뮤니티 페이지들을 위한 코드 파일들이 위치
 
-## 개발 배경
-애플사가 제공하는 모바일 결제 서비스 애플 페이가 한국에서 서비스를 실시한다. 하지만 이를 사용하는데 많은 제약이 있다. 우선 사용처가 NFC(Near field Communication) 단말기를 갖추고, 애플 페이를 지원해야 한다. 하지만 현재 대한민국의 대부분의 매장은 마그네틱 보안전송(MST, Magnetic Secure Transmission)와 IC칩 결제방식을 사용하고 있어, NFC 단말기를 보유한 매장은 국내의 10%도 되지 않으며, NFC 단말기를 구매 하는 데는 약 20만원 정도 소비해야 한다. 삼성 페이는 이를 해결하기 위해 MST와 NFC 두 가지 방법이 모두 가능하도록 설계하여 현재 국내 사용자들은 삼성 페이를 불편함 없이 사용할 수 있다. 또한 당분간은 현대 카드만 애플페이를 지원하므로 애플페이의 출시가 매출의 증가로 이어지지 않을 것이라 생각하는 자영업자나 소상공인은 애플페이 환경을 구축하는데 적극적이지 않을 것이다. 이러한 이유로 당분간은 소수의 가게만이 애플페이를 지원할 것으로 예상되어 지도에 애플페이 가맹점을 표시하여 사용자의 정보 부족의 불편함을 줄여 애플페이 사용자 증가를 기대할 수 있고, 이는 가맹점의 증가로 이어질 가능성이 높아 애플페이의 상용화를 가속화시켜 궁극적으로는 가맹점을 지도로 찾지 않아도 되는 환경을 만드는 것이 본 조의 목표이다. 
-애플페이는 실물 카드가 없어도 애플사의 제품으로 결제가 가능하다. 그러므로 카드를 가지고 있지 않을 때 유용하다. 만약 실물 카드를 소지하지 않았지만 급하게 무언가를 구매해야 하는 경우, 근처의 모든 가게에 가서 애플페이를 지원하는지 물어보기는 어렵다. 이 때 지도에 표시된 애플페이 가맹점을 보고 가장 가까운 가맹점을 지도의 지시를 보고 찾아갈 수 있어 애플페이가 상용화가 되기 전 까지 사용자가 불편함을 최대한으로 느끼지 않도록 한다.
-
-## 메인페이지
-### 웹화면
-![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/8af9fa26-91f9-4002-b277-caac909b5ea2)
 <br />
-현위치 주변의 가맹점의 위치를 카테고리별로 확인할 수 있음
 
-![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/840845e7-28c7-46dd-a078-1e6680703dca)
-<br />
-카테고리 버튼을 통해 원하는 항목의 가맹점들만 필터링할 수 있음
-
-### iOS화면
-![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/c5cc0481-570e-4576-8354-01a681ffb98f)
-
-## 구글 로그인
-![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/0c315fdb-10d2-48cc-9cec-603d29d4ed2e)
-
-## 커뮤니티
-![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/74cc9f83-7f4c-403a-8cd2-7f591313c68a)
-![image](https://github.com/lsh981127/Applepay-search-app-Capstone-Project/assets/83868210/8e4beb89-2beb-4f79-b510-e11036732e3c)
-<br />
-애플페이 가맹점들에 대한 이용후기를 공유할 수 있는 커뮤니티 공간을 제공함 
-
-
+## 회고
+---
+1. 애플페이가 가능한 매장에 대한 API가 없었기 때문에 일일이 공공 데이터를 전처리한 점이 아쉽다. 
+2. 구글 맵 페이지의 마커와 커뮤니티 페이지 간의 유기적 연결성이 부족하다. 
+3. 매장 검색 기능이 있으면 보다 쉽게 매장을 검색할 수 있을 것 같다. 
+4. 데이터 fetching 속도를 개선할 필요가 있다. 
