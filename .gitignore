@@ -46,3 +46,4 @@ app.*.map.json
 
 #.gitignore
 lib/firebase_options.dart
+lib/src/gsheet_options.dart
