@@ -20,12 +20,6 @@
     <td>UI 디자인 및 UI 개발</td>	
   </tr>
   <tr>
-    <td>2017110922</td>
-    <td>2017112197</td>
-    <td>2019112132</td>
-    <td>2023130002</td>	
-  </tr>
-  <tr>
     <td>경제학과</td>
     <td>정보통신공학과</td>
     <td>정보통신공학과</td>
@@ -65,7 +59,8 @@
 <br>
 
 ## 프로젝트 소개
-2023년 3월부터 한국에 애플페이가 도입되면서 애플페이 가맹점 정보를 제공하여 사용자의 불편함을 줄이고자 프로젝트를 기획하게 되었다. 현재 위치에 따른 애플페이 사용가능 가맹점의 위치 정보를 제공하며 해당 매장에 대한 리뷰를 남길 수 있다. 
+- 2023년 3월부터 한국에 애플페이가 도입되면서 애플페이 가맹점 정보를 제공하여 사용자의 불편함을 줄이고자 프로젝트를 기획하게 되었다.
+- 현재 위치에 따른 애플페이 사용가능 가맹점의 위치 정보를 제공하며 해당 매장에 대한 리뷰를 남길 수 있다. 
 
 <br>
 
@@ -103,8 +98,8 @@
 
 <br>
 
-## 코드 및 브런치 구성
- - main 브런치
+## 코드 및 Branch 구성
+ - main Branch
     - 웹과 안드로이드 앱을 실행하는 브런치
 - lsh-ios
     - ios앱을 실행하는 브런치
@@ -122,44 +117,65 @@
 <br>
 
 
+## 프로젝트 구조
+
 ```
 newcapstone
- ┣ lib
- ┃ ┣ community
- ┃ ┃ ┣ components
- ┃ ┃ ┃ ┣ custom_elevated_button.dart
- ┃ ┃ ┃ ┣ custom_textarea.dart
- ┃ ┃ ┃ ┣ custom_text_form_field.dart
- ┃ ┃ ┃ ┗ vaildator_util.dart
- ┃ ┃ ┣ color.dart
- ┃ ┃ ┣ Comment.dart
- ┃ ┃ ┣ database.dart
- ┃ ┃ ┣ freeforum.dart
- ┃ ┃ ┣ freeforum_detail.dart
- ┃ ┃ ┣ home_cubit.dart
- ┃ ┃ ┣ Post.dart
- ┃ ┃ ┣ profile.dart
- ┃ ┃ ┣ search.dart
- ┃ ┃ ┗ write_item.dart
- ┃ ┣ mypage
- ┃ ┃ ┣ business_register.dart
- ┃ ┃ ┣ myposts.dart
- ┃ ┃ ┗ nickname_change.dart
- ┃ ┣ src
- ┃ ┃ ┣ googleMap.dart
- ┃ ┃ ┣ gsheet_options.dart
- ┃ ┃ ┣ home_page.dart
- ┃ ┃ ┗ login_page.dart
- ┃ ┣ firebase_options.dart
- ┃ ┗ main.dart
- ┣ .flutter-plugins
- ┣ .flutter-plugins-dependencies
- ┣ .gitignore
- ┣ .metadata
- ┣ analysis_options.yaml
- ┣ pubspec.lock
- ┣ pubspec.yaml
- ┗ README.md
+│
+│  .flutter-plugins
+│  .flutter-plugins-dependencies
+│  .gitignore
+│  .metadata
+│  analysis_options.yaml
+│  pubspec.lock
+│  pubspec.yaml
+│  README.md
+│              
+├─lib
+│  │  firebase_options.dart
+│  │  main.dart
+│  │  
+│  ├─community
+│  │  │  color.dart
+│  │  │  Comment.dart
+│  │  │  database.dart
+│  │  │  freeforum.dart
+│  │  │  freeforum_detail.dart
+│  │  │  home_cubit.dart
+│  │  │  Post.dart
+│  │  │  profile.dart
+│  │  │  search.dart
+│  │  │  write_item.dart
+│  │  │  
+│  │  └─components
+│  │          custom_elevated_button.dart
+│  │          custom_textarea.dart
+│  │          custom_text_form_field.dart
+│  │          vaildator_util.dart
+│  │          
+│  ├─mypage
+│  │      business_register.dart
+│  │      myposts.dart
+│  │      nickname_change.dart
+│  │      
+│  └─src
+│          googleMap.dart
+│          gsheet_options.dart
+│          home_page.dart
+│          login_page.dart
+│      
+└─web
+    │  favicon.png
+    │  index.html
+    │  manifest.json
+    │  
+    └─icons
+            Icon-192.png
+            Icon-512.png
+            Icon-maskable-192.png
+            Icon-maskable-512.png
+            
+
 ```
 
 ## 회고
