@@ -14,10 +14,10 @@
     <th>정경인</th>	
   </tr>
   <tr>
-    <td>팀장 데이터 전처리</td>
-    <td>프로젝트 초기 개발 세팅, iOS 개발, 구글 로그인 연동</td>
-    <td>firestore 데이터 연동</td>
-    <td>UI 디자인, 구글 맵 페이지 UI 개발</td>	
+    <td>팀장, 기획 및 데이터 처리</td>
+    <td>프로젝트 초기 세팅 및 iOS 개발</td>
+    <td>firestore 데이터 연동 및 UI 개발</td>
+    <td>UI 디자인 및 UI 개발</td>	
   </tr>
   <tr>
     <td>2017110922</td>
@@ -75,7 +75,7 @@
 사용자의 위치를 엑세스하여 500m 이내에 위치하는 애플페이 사용가능 매장을 지도에서 확인할 수 있다. 원하는 위치로 지도를 이동시켜 화면 중심 위치를 기준으로 500m 이내 매장도 확인 가능하다. 
 카테고리에 따라 원하는 가맹점의 업종을 필터링하여 볼 수 있다. 
 <br>
-<img style="height:500px; margin-top:10px;"
+<img style="height:500px; margin-top:20px;"
      src="https://velog.velcdn.com/images/tnfus916/post/ac928bcc-e3d7-4ee1-9f28-f77d64200734/image.png" />
      
 <br>
@@ -83,7 +83,7 @@
 ### 로그인
 커뮤니티 페이지 사용을 위한 사용자의 정보를 저장하기 위해 로그인을 필요로 했다. 사용자의 편의를 위해 소셜 로그인을 사용했다. 
 <br>
-<img style="height:500px; margin-top:10px;"
+<img style="height:500px; margin-top:20px;"
      src="https://velog.velcdn.com/images/tnfus916/post/73d5f75c-6332-4712-bda1-583b9011831b/image.png" />
 
 
@@ -92,7 +92,7 @@
 ### 커뮤니티
 소상공인이 운영하는 가맹점의 애플페이 사용가능 여부를 공유할 수 있으며 매장에 대한 리뷰를 남길 수 있다. 소상공인과 사용자간의 소통의 장을 마련하여 다른 사용자들에게 유익한 정보를 제공하는 효과를 기대할 수 있다.
 <br>
-<div style="display:flex; justify-content:center; margin-top:10px;"
+<div style="display:flex; justify-content:center; margin-top:20px;"
   <img style="height:500px; margin-right:20px;"
      src="https://velog.velcdn.com/images/tnfus916/post/b9cf1497-31f8-4678-9d73-f9de2bc28711/image.png" />
   <img style="height:500px;"
@@ -121,6 +121,5 @@
 
 ## 회고
 1. 애플페이가 가능한 매장에 대한 API가 없었기 때문에 일일이 공공 데이터를 전처리한 점이 아쉽다. 
-2. 구글 맵 페이지의 마커와 커뮤니티 페이지 간의 유기적 연결성이 부족하다. 
-3. 매장 검색 기능이 있으면 보다 쉽게 매장을 검색할 수 있을 것 같다. 
-4. 데이터 fetching 속도를 개선할 필요가 있다. 
+2. 구글 맵 페이지의 마커와 커뮤니티 페이지 간의 유기적 연결성이 부족하다.
+3. 데이터 fetching 속도를 개선할 필요가 있다. 
