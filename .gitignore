@@ -48,5 +48,5 @@ app.*.map.json
 lib/firebase_options.dart
 lib/src/gsheet_options.dart
 web/index.html
-android/app/src/google-services.json
+android/app/google-services.json
 ios/firebase_app_id_file.json
